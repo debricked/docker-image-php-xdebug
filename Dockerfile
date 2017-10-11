@@ -6,6 +6,8 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 
 RUN apt update && apt install git zlibc zlib1g zlib1g-dev libicu-dev libpng-dev nodejs yarn libpcre3-dev -y
 
+RUN git clone --recursive https://github.com/pornel/pngquant.git \
+
 RUN pecl install apcu \
     && pecl install xdebug \
     && docker-php-ext-enable apcu xdebug
