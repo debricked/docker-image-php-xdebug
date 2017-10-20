@@ -6,6 +6,9 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 
 RUN apt update && apt install git zlibc zlib1g zlib1g-dev libicu-dev libpng-dev nodejs yarn libpcre3-dev optipng -y
 
+    && dpkg --install mozjpeg_3.1_amd64.deb \
+    && apt install -f
+
 RUN git clone --recursive https://github.com/pornel/pngquant.git \
     && cd pngquant \
     && ./configure \
