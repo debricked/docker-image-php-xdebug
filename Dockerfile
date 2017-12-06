@@ -1,6 +1,6 @@
 FROM php:7.2
 
-RUN apt update && apt install gnupg
+RUN apt update && apt install gnupg -y
 
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash -
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
