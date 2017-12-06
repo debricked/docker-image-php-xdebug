@@ -1,4 +1,4 @@
-FROM php:7.1
+FROM php:7.2
 
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash -
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
@@ -17,7 +17,7 @@ RUN git clone --recursive https://github.com/pornel/pngquant.git \
     && make install
 
 RUN pecl install apcu \
-    && pecl install xdebug \
+    && pecl install xdebug-2.6.0alpha1 \
     && docker-php-ext-enable apcu xdebug
 
 RUN docker-php-ext-install exif fileinfo gd intl mbstring pdo_mysql sockets zip
