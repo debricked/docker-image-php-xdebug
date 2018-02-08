@@ -19,7 +19,7 @@ RUN git clone --recursive https://github.com/pornel/pngquant.git \
     && make install
 
 RUN pecl install apcu \
-    && pecl install xdebug-2.6.0beta1 \
+    && pecl install xdebug \
     && docker-php-ext-enable apcu xdebug
 
 RUN docker-php-ext-install exif fileinfo gd intl mbstring pdo_mysql sockets zip
