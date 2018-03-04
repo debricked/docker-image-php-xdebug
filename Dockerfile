@@ -10,7 +10,7 @@ RUN echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | tee -
 
 RUN apt update && apt install git zlibc zlib1g zlib1g-dev libicu-dev libpng-dev nodejs yarn libpcre3-dev optipng elasticsearch -y
 
-RUN /bin/systemctl daemon-reload && /bin/systemctl enable elasticsearch.service
+RUN update-rc.d elasticsearch defaults 95 10
 
 RUN curl -O https://mozjpeg.codelove.de/bin/mozjpeg_3.1_amd64.deb \ 
     && dpkg --install mozjpeg_3.1_amd64.deb \
