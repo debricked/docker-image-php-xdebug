@@ -36,4 +36,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 
 RUN echo "date.timezone = Europe/Stockholm" >> /usr/local/etc/php/php.ini \
     && echo "opcache.enable = 1" >> /usr/local/etc/php/php.ini \
-    && echo "opcache.enable_cli = 1" >> /usr/local/etc/php/php.ini
+    && echo "opcache.enable_cli = 1" >> /usr/local/etc/php/php.ini \
+    && echo "realpath_cache_size = 50M" >> /usr/local/etc/php/php.ini \
+    && echo /usr/local/etc/php/php.ini
