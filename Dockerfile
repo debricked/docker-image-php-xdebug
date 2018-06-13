@@ -29,7 +29,7 @@ RUN pecl install apcu \
     && pecl install xdebug \
     && docker-php-ext-enable apcu xdebug
 
-RUN docker-php-ext-install exif fileinfo gd intl mbstring pdo_mysql sockets zip
+RUN docker-php-ext-install exif fileinfo gd intl mbstring pdo_mysql opcache sockets zip
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
     && chmod +x /usr/bin/composer
