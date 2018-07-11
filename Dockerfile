@@ -7,8 +7,13 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN curl -sS https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 RUN echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-6.x.list
+RUN apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8 && add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://ftp.ddg.lth.se/mariadb/repo/10.3/debian stretch main'
 
 RUN apt update && apt upgrade -y && mkdir -p /usr/share/man/man1 && apt install openjdk-8-jre -y
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && debconf-set-selections <<< 'mariadb-server-10.3 mysql-server/root_password password docker' \
+    && debconf-set-selections <<< 'mariadb-server-10.3 mysql-server/root_password_again password docker' \
+    && apt install mariadb-server mariadb-client
 RUN apt install git zlibc zlib1g zlib1g-dev libicu-dev libpng-dev nodejs yarn libpcre3-dev optipng elasticsearch -y
 
 RUN mkdir -p /usr/share/man/man1 \ 
