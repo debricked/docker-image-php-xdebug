@@ -5,10 +5,16 @@ RUN apt update && apt install gnupg -y
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install MariaDB, partly taken from https://github.com/docker-library/mariadb/blob/master/10.3/Dockerfile
+RUN groupadd -r mysql && useradd -r -g mysql mysql
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 RUN apt install software-properties-common dirmngr -y \
     && apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8 \
     && add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://ftp.ddg.lth.se/mariadb/repo/10.3/debian stretch main'
+    && { \
+		echo 'Package: *'; \
+		echo 'Pin: release o=MariaDB'; \
+		echo 'Pin-Priority: 999'; \
+    } > /etc/apt/preferences.d/mariadb
 RUN { \
 		echo "mariadb-server-10.3" mysql-server/root_password password 'docker'; \
 		echo "mariadb-server-10.3" mysql-server/root_password_again password 'docker'; \
@@ -17,6 +23,9 @@ RUN { \
 	&& apt-get install -y \
 		mariadb-server \
                 mariadb-client \
+		mysql-common \
+		libmariadbclient18 \
+		libmariadb3 \
 		socat \
 # purge and re-create /var/lib/mysql with appropriate ownership
 	&& rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql /var/run/mysqld \
