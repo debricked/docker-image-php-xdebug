@@ -3,14 +3,13 @@ FROM php:7.2
 RUN apt update && apt install gnupg -y
 
 # Install MariaDB, partly taken from https://github.com/docker-library/mariadb/blob/master/10.3/Dockerfile
-ENV MARIADB_MAJOR 10.3
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 RUN apt install software-properties-common dirmngr -y \
     && apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8 \
-    && add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://ftp.ddg.lth.se/mariadb/repo/$MARIADB_MAJOR/debian stretch main'
+    && add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://ftp.ddg.lth.se/mariadb/repo/10.3/debian stretch main'
 RUN { \
-		echo "mariadb-server-$MARIADB_MAJOR" mysql-server/root_password password 'docker'; \
-		echo "mariadb-server-$MARIADB_MAJOR" mysql-server/root_password_again password 'docker'; \
+		echo "mariadb-server-10.3" mysql-server/root_password password 'docker'; \
+		echo "mariadb-server-10.3" mysql-server/root_password_again password 'docker'; \
 	} | debconf-set-selections \
 	&& apt-get update \
 	&& apt-get install -y \
