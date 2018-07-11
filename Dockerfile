@@ -2,11 +2,33 @@ FROM php:7.2
 
 RUN apt update && apt install gnupg -y
 
+# Install MariaDB, partly taken from https://github.com/docker-library/mariadb/blob/master/10.3/Dockerfile
+ENV MARIADB_MAJOR 10.3
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
-
 RUN apt install software-properties-common dirmngr -y \
     && apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8 \
-    && add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://ftp.ddg.lth.se/mariadb/repo/10.3/debian stretch main'
+    && add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://ftp.ddg.lth.se/mariadb/repo/$MARIADB_MAJOR/debian stretch main'
+RUN { \
+		echo "mariadb-server-$MARIADB_MAJOR" mysql-server/root_password password 'docker'; \
+		echo "mariadb-server-$MARIADB_MAJOR" mysql-server/root_password_again password 'docker'; \
+	} | debconf-set-selections \
+	&& apt-get update \
+	&& apt-get install -y \
+		mariadb-server \
+        mariadb-client \
+		socat \
+# purge and re-create /var/lib/mysql with appropriate ownership
+	&& rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql /var/run/mysqld \
+	&& chown -R mysql:mysql /var/lib/mysql /var/run/mysqld \
+# ensure that /var/run/mysqld (used for socket and lock files) is writable regardless of the UID our mysqld instance ends up having at runtime
+	&& chmod 777 /var/run/mysqld \
+# comment out a few problematic configuration values
+	&& find /etc/mysql/ -name '*.cnf' -print0 \
+		| xargs -0 grep -lZE '^(bind-address|log)' \
+		| xargs -rt -0 sed -Ei 's/^(bind-address|log)/#&/' \
+# don't reverse lookup hostnames, they are usually another container
+    && echo '[mysqld]\nskip-host-cache\nskip-name-resolve' > /etc/mysql/conf.d/docker.cnf
+
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash -
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN curl -sS https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
@@ -14,10 +36,6 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 RUN echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-6.x.list
 
 RUN apt update && apt upgrade -y && mkdir -p /usr/share/man/man1 && apt install openjdk-8-jre -y
-RUN export DEBIAN_FRONTEND=noninteractive \
-    && debconf-set-selections <<< 'mariadb-server-10.3 mysql-server/root_password password docker' \
-    && debconf-set-selections <<< 'mariadb-server-10.3 mysql-server/root_password_again password docker' \
-    && apt install mariadb-server mariadb-client -y
 RUN apt install git zlibc zlib1g zlib1g-dev libicu-dev libpng-dev nodejs yarn libpcre3-dev optipng elasticsearch -y
 
 RUN mkdir -p /usr/share/man/man1 \ 
