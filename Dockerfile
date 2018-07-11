@@ -4,7 +4,7 @@ RUN apt update && apt install gnupg -y
 
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 
-RUN apt install software-properties-common dirmngr \
+RUN apt install software-properties-common dirmngr -y \
     && apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8 \
     && add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://ftp.ddg.lth.se/mariadb/repo/10.3/debian stretch main'
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash -
@@ -17,7 +17,7 @@ RUN apt update && apt upgrade -y && mkdir -p /usr/share/man/man1 && apt install 
 RUN export DEBIAN_FRONTEND=noninteractive \
     && debconf-set-selections <<< 'mariadb-server-10.3 mysql-server/root_password password docker' \
     && debconf-set-selections <<< 'mariadb-server-10.3 mysql-server/root_password_again password docker' \
-    && apt install mariadb-server mariadb-client
+    && apt install mariadb-server mariadb-client -y
 RUN apt install git zlibc zlib1g zlib1g-dev libicu-dev libpng-dev nodejs yarn libpcre3-dev optipng elasticsearch -y
 
 RUN mkdir -p /usr/share/man/man1 \ 
