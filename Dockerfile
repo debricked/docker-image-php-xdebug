@@ -21,9 +21,8 @@ RUN mkdir -p /usr/share/man/man1 \
     && echo "discovery.type: single-node" >> /etc/elasticsearch/elasticsearch.yml \
     && update-rc.d elasticsearch defaults 95 10
 
-RUN curl -O https://mozjpeg.codelove.de/bin/mozjpeg_3.1_amd64.deb \ 
-    && dpkg --install mozjpeg_3.1_amd64.deb \
-    && apt install -f
+RUN apt install automake nasm libtool -y && git clone git://github.com/mozilla/mozjpeg.git && cd mozjpeg \
+    && git checkout v3.3.1 && autoreconf -fiv && ./configure --prefix=/opt/mozjpeg && make install
 
 RUN git clone --recursive https://github.com/pornel/pngquant.git \
     && cd pngquant \
