@@ -1,4 +1,4 @@
-# docker-image-php-xdebug
+# Docker image with PHP and a few extras
 
 Latest stable PHP with xdebug and a few extras
 
