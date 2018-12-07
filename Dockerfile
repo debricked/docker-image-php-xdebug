@@ -6,7 +6,7 @@ ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 ENV REDIS_HOST=localhost
 ENV REDIS_PORT=6379
 RUN apt install software-properties-common dirmngr -y \
-    && apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8 \
+    && apt-key adv --no-tty --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8 \
     && add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://ftp.ddg.lth.se/mariadb/repo/10.3/debian stretch main'
 
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
