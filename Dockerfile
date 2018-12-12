@@ -16,7 +16,7 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 RUN echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-6.x.list
 
 RUN apt update && apt upgrade -y && mkdir -p /usr/share/man/man1 && apt install openjdk-8-jre -y
-RUN apt install redis-server mariadb-client git zlibc zlib1g zlib1g-dev libicu-dev libpng-dev nodejs yarn libpcre3-dev optipng elasticsearch -y
+RUN apt install redis-server mariadb-client git zlibc zlib1g zlib1g-dev libzip libzip-dev libicu-dev libpng-dev nodejs yarn libpcre3-dev optipng elasticsearch -y
 
 RUN mkdir -p /usr/share/man/man1 \ 
     && apt install procps openjdk-8-jre-headless -yqq \
