@@ -59,3 +59,6 @@ RUN echo "date.timezone = Europe/Stockholm" >> /usr/local/etc/php/php.ini \
     && echo "apc.enable_cli = 1" >> /usr/local/etc/php/php.ini \
     && echo /usr/local/etc/php/php.ini
 
+# "fake" dbus address to prevent errors
+# https://github.com/SeleniumHQ/docker-selenium/issues/87
+ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
