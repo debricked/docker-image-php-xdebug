@@ -1,48 +1,26 @@
-FROM php:7.3
+FROM php:7.3-fpm-alpine
 
-RUN apt update && apt install gnupg -y
+RUN apk add --update --no-cache mariadb-client libbz2 git zlib pcre nodejs \
+    yarn optipng libtool nasm openssh-client libxslt libzip icu libpng bzip2
 
-ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
-ENV REDIS_HOST=localhost
-ENV REDIS_PORT=6379
-RUN apt install software-properties-common dirmngr -y \
-    && apt-key adv --no-tty --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8 \
-    && add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://ftp.ddg.lth.se/mariadb/repo/10.3/debian stretch main'
+# Chromium dependencies
+RUN echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
+    && echo @edge http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories \
+    && apk update \
+    && apk add --no-cache \
+    chromium@edge \
+    harfbuzz@edge \
+    nss@edge
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN curl -sS https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
-RUN curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-6.x.list
-RUN echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1
 
-RUN apt update && apt upgrade -y && mkdir -p /usr/share/man/man1 && apt install openjdk-8-jre -y
-RUN apt install redis-server mariadb-client git zlibc zlib1g zlib1g-dev libzip-dev libicu-dev libpng-dev nodejs yarn libpcre3-dev optipng elasticsearch libxslt1-dev libxslt1.1 -y
-# Chrome and dependencies
-RUN apt install google-chrome-stable \
-    libgtk2.0-0 \
-    libnotify-dev \
-    libgconf-2-4 \
-    libnss3 \
-    libxss1 \
-    libasound2 \
-    xvfb \
-    dbus-x11 -yqq > /dev/null
+# "fake" dbus address to prevent errors
+# https://github.com/SeleniumHQ/docker-selenium/issues/87
+ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
-RUN mkdir -p /usr/share/man/man1 \ 
-    && apt install procps openjdk-8-jre-headless -yqq \
-    && echo "discovery.type: single-node" >> /etc/elasticsearch/elasticsearch.yml \
-    && update-rc.d elasticsearch defaults 95 10
-
-RUN apt install automake nasm libtool -y && git clone git://github.com/mozilla/mozjpeg.git && cd mozjpeg \
-    && git checkout v3.3.1 && autoreconf -fiv && ./configure --prefix=/opt/mozjpeg && make install
-
-RUN git clone --recursive https://github.com/pornel/pngquant.git \
-    && cd pngquant \
-    && ./configure \
-    && make \
-    && make install
+# Build dependencies
+RUN apk add --no-cache --virtual build-dependencies autoconf automake build-base libzip-dev libxslt-dev icu-dev \
+    libpng-dev bzip2-dev
 
 RUN pecl install apcu \
     && pecl install xdebug-2.7.1 \
@@ -71,6 +49,14 @@ RUN echo "date.timezone = Europe/Stockholm" >> /usr/local/etc/php/php.ini \
     && echo "apc.enable_cli = 1" >> /usr/local/etc/php/php.ini \
     && echo /usr/local/etc/php/php.ini
 
-# "fake" dbus address to prevent errors
-# https://github.com/SeleniumHQ/docker-selenium/issues/87
-ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
+RUN git clone git://github.com/mozilla/mozjpeg.git && cd mozjpeg \
+    && git checkout v3.3.1 && autoreconf -fiv && ./configure --prefix=/opt/mozjpeg && make install
+
+RUN git clone --recursive https://github.com/pornel/pngquant.git \
+    && cd pngquant \
+    && ./configure \
+    && make \
+    && make install
+
+# Delete build dependencies
+RUN apk del build-dependencies && rm -rf /var/cache/*
