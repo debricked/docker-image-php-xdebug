@@ -1,7 +1,7 @@
 FROM php:7.3-fpm-alpine
 
 RUN apk add --update --no-cache mariadb-client libbz2 git zlib pcre nodejs \
-    yarn optipng libtool nasm openssh-client libxslt libzip icu libpng bzip2
+    yarn optipng libtool nasm openssh-client libxslt libzip icu libpng bzip2 libxslt-dev build-base
 
 # Chromium dependencies
 RUN echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
@@ -10,7 +10,10 @@ RUN echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repos
     && apk add --no-cache \
     chromium@edge \
     harfbuzz@edge \
-    nss@edge
+    nss@edge \
+    freetype@edge \
+    ttf-freefont@edge \
+    xvfb@edge
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1
 
@@ -19,8 +22,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
 # Build dependencies
-RUN apk add --no-cache --virtual build-dependencies autoconf automake build-base libzip-dev libxslt-dev icu-dev \
-    libpng-dev bzip2-dev
+RUN apk add --no-cache --virtual build-dependencies autoconf automake libzip-dev icu-dev libpng-dev bzip2-dev
 
 RUN pecl install apcu \
     && pecl install xdebug-2.7.1 \
