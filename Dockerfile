@@ -13,7 +13,13 @@ RUN echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repos
     nss@edge \
     freetype@edge \
     ttf-freefont@edge \
-    xvfb@edge
+    xvfb@edge \
+    gtk+2.0@edge \
+    libnotify-dev@edge \
+    gconf@edge \
+    gconf-dev@edge \
+    libxscrnsaver@edge \
+    alsa-lib@edge
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1
 
