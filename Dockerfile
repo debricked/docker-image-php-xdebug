@@ -13,13 +13,15 @@ RUN apt install software-properties-common dirmngr -y
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list
 
 RUN apt update && apt upgrade -y && apt install mysql-client git zlibc zlib1g zlib1g-dev libzip-dev libicu-dev \
     libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 -y
 
 # Chromium dependencies
-RUN apt install chromium \
+RUN apt install google-chrome-stable \
     libgtk2.0-0 \
     libnotify-dev \
     libgconf-2-4 \
