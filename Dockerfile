@@ -1,34 +1,33 @@
-FROM php:7.3-fpm-alpine
+FROM php:7.3
 
-RUN apk add --update --no-cache mariadb-client libbz2 git zlib pcre nodejs \
-    yarn optipng libtool nasm openssh-client libxslt libzip icu libpng bzip2 libxslt-dev build-base
-
-# Chromium dependencies
-RUN echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
-    && echo @edge http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories \
-    && apk update \
-    && apk add --no-cache \
-    chromium@edge \
-    harfbuzz@edge \
-    nss@edge \
-    freetype@edge \
-    ttf-freefont@edge \
-    xvfb@edge \
-    gtk+2.0@edge \
-    libnotify-dev@edge \
-    gconf@edge \
-    gconf-dev@edge \
-    libxscrnsaver@edge \
-    alsa-lib@edge
-
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
+# Fixes problems with Puppeteer (Chromium API)
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1
-
 # "fake" dbus address to prevent errors
 # https://github.com/SeleniumHQ/docker-selenium/issues/87
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
-# Build dependencies
-RUN apk add --no-cache --virtual build-dependencies autoconf automake libzip-dev icu-dev libpng-dev bzip2-dev
+RUN apt update && apt install gnupg -y
+
+RUN apt install software-properties-common dirmngr -y
+
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
+RUN apt update && apt upgrade -y && apt install mysql-client git zlibc zlib1g zlib1g-dev libzip-dev libicu-dev \
+    libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 -y
+
+# Chromium dependencies
+RUN apt install chromium \
+    libgtk2.0-0 \
+    libnotify-dev \
+    libgconf-2-4 \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    xvfb \
+    dbus-x11 -yqq > /dev/null
 
 RUN pecl install apcu \
     && pecl install xdebug-2.7.1 \
@@ -57,7 +56,7 @@ RUN echo "date.timezone = Europe/Stockholm" >> /usr/local/etc/php/php.ini \
     && echo "apc.enable_cli = 1" >> /usr/local/etc/php/php.ini \
     && echo /usr/local/etc/php/php.ini
 
-RUN git clone git://github.com/mozilla/mozjpeg.git && cd mozjpeg \
+RUN apt install automake nasm libtool -y && git clone git://github.com/mozilla/mozjpeg.git && cd mozjpeg \
     && git checkout v3.3.1 && autoreconf -fiv && ./configure --prefix=/opt/mozjpeg && make install
 
 RUN git clone --recursive https://github.com/pornel/pngquant.git \
@@ -66,5 +65,5 @@ RUN git clone --recursive https://github.com/pornel/pngquant.git \
     && make \
     && make install
 
-# Delete build dependencies
-RUN apk del build-dependencies && rm -rf /var/cache/*
+# Cleanup
+RUN rm -rf /var/lib/apt/lists/* && apt clean
