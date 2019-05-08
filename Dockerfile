@@ -1,4 +1,4 @@
-FROM php:7.3
+FROM php:7.3-fpm
 
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 # Fixes problems with Puppeteer (Chromium API)
