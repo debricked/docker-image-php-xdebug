@@ -45,7 +45,7 @@ RUN docker-php-ext-install exif fileinfo gd intl mbstring pdo_mysql opcache sock
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
     && chmod +x /usr/bin/composer
 
-RUN echo "date.timezone = Europe/Stockholm" >> /usr/local/etc/php/php.ini \
+RUN echo "date.timezone = UTC" >> /usr/local/etc/php/php.ini \
     && echo "opcache.enable = 1" >> /usr/local/etc/php/php.ini \
     && echo "opcache.enable_cli = 1" >> /usr/local/etc/php/php.ini \
     && echo "opcache.memory_consumption = 256" >> /usr/local/etc/php/php.ini \
