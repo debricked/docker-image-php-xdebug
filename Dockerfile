@@ -20,15 +20,44 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     echo 'deb http://deb.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/backports.list && \
     mkdir -p /usr/share/man/man1
 
-RUN apt update && apt upgrade -y && apt install mysql-client git zlibc zlib1g zlib1g-dev libzip-dev libicu-dev \
+RUN apt update && apt upgrade -y && apt install unzip mariadb-client git zlibc zlib1g zlib1g-dev libzip-dev libicu-dev \
     libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk ca-certificates p11-kit -y
+
+RUN curl -L -O https://download.java.net/openjdk/jdk7u75/ri/jdk_ri-7u75-b13-linux-x64-18_dec_2014.tar.gz && \
+    tar -xvf jdk_ri-7u75-b13-linux-x64-18_dec_2014.tar.gz && \
+    mkdir -p /usr/lib/jvm && \
+    mv java-se-7u75-ri /usr/lib/jvm && \ 
+    rm jdk_ri-7u75-b13-linux-x64-18_dec_2014.tar.gz
+
+RUN curl -L -O https://download.java.net/openjdk/jdk8u40/ri/jdk_ri-8u40-b25-linux-x64-10_feb_2015.tar.gz && \
+    tar -xvf jdk_ri-8u40-b25-linux-x64-10_feb_2015.tar.gz && \
+    mv java-se-8u40-ri /usr/lib/jvm && \
+    rm jdk_ri-8u40-b25-linux-x64-10_feb_2015.tar.gz
+
+RUN curl -L -O https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz && \
+    tar -xvf openjdk-9.0.4_linux-x64_bin.tar.gz && \
+    mv jdk-9.0.4 /usr/lib/jvm && \
+    rm openjdk-9.0.4_linux-x64_bin.tar.gz
+
+RUN curl -L -O https://download.java.net/java/GA/jdk10/10.0.2/19aef61b38124481863b1413dce1855f/13/openjdk-10.0.2_linux-x64_bin.tar.gz && \
+    tar -xvf openjdk-10.0.2_linux-x64_bin.tar.gz && \
+    mv jdk-10.0.2 /usr/lib/jvm && \
+    rm openjdk-10.0.2_linux-x64_bin.tar.gz
+
+
+ RUN update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-se-7u75-ri/bin/java" 1 && \
+     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-se-8u40-ri/bin/java" 1 && \
+     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-9.0.4/bin/java" 1 && \
+     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-10.0.2/bin/java" 1 
+
+
 
 # update "cacerts" bundle to use Debian's CA certificates (and make sure it stays up-to-date with changes to Debian's store)
 # see https://github.com/docker-library/openjdk/issues/327
 #     http://rabexc.org/posts/certificates-not-working-java#comment-4099504075
 #     https://salsa.debian.org/java-team/ca-certificates-java/blob/3e51a84e9104823319abeb31f880580e46f45a98/debian/jks-keystore.hook.in
 #     https://git.alpinelinux.org/aports/tree/community/java-cacerts/APKBUILD?id=761af65f38b4570093461e6546dcf6b179d2b624#n29
-RUN export JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:/bin/javac::") && echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
+RUN export JAVA_HOME="/usr/lib/jvm/jdk-9.0.4" && echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
     { \
     		echo '#!/usr/bin/env bash'; \
     		echo 'set -Eeuo pipefail'; \
@@ -47,6 +76,62 @@ RUN export JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:/bin/javac::") && ech
 # basic smoke test
     javac --version; \
     java --version
+
+ENV JAVA_HOME="/usr/lib/jvm/jdk-9.0.4"
+ENV JAVA_HOME7="/usr/lib/jvm/java-se-7u75-ri"
+ENV JAVA_HOME8="/usr/lib/jvm/java-se-8u40-ri"
+ENV JAVA_HOME9="/usr/lib/jvm/jdk-9.0.4"
+ENV JAVA_HOME10="/usr/lib/jvm/jdk-10.0.2"
+ENV JAVA_HOME11="/usr/lib/jvm/java-11-openjdk-amd64"
+
+#install Maven
+ENV MAVEN_VERSION 3.6.0
+
+RUN curl -L -O http://www-eu.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
+    tar xzf apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
+    ln -s apache-maven-${MAVEN_VERSION} apache-maven && \
+    mv apache-maven-${MAVEN_VERSION} /usr/lib && \
+    rm apache-maven-${MAVEN_VERSION}-bin.tar.gz
+
+ENV M2_HOME /usr/lib/mvn
+ENV MAVEN_HOME /usr/lib/apache-maven-${MAVEN_VERSION}
+ENV PATH $MAVEN_HOME/bin:$PATH
+
+#install Gradle
+ENV GRADLE_VERSION 5.5.1
+
+RUN cd / \
+    && curl -L -O https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip \
+    && unzip -d /opt/gradle gradle-${GRADLE_VERSION}-bin.zip \
+    && rm /gradle-${GRADLE_VERSION}-bin.zip
+
+ENV GRADLE_HOME /opt/gradle/gradle-${GRADLE_VERSION}
+ENV PATH ${GRADLE_HOME}/bin:${PATH}
+
+#install Gdub
+RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \ 
+  && dougborg-gdub-ebe14f1/install && rm -r dougborg-gdub-ebe14f1
+
+# Set the environment and URL
+ENV JAVA_OPTS='-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee'
+
+ENV SDK_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip" \
+    ANDROID_HOME="/usr/local/android-sdk" \
+    ANDROID_VERSION=29 \
+    ANRDROID_BUILD_TOOLS_VESION=29.0.1
+
+# Download Android SDK
+RUN mkdir "$ANDROID_HOME" .android \
+    && cd "$ANDROID_HOME" \
+    && curl -o sdk.zip $SDK_URL \
+    && unzip sdk.zip \
+    && rm sdk.zip \
+    && yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+
+RUN echo "### User Sources for Android SDK Manager" > ~/.android/repositories.cfg && echo "#Fri Nov 03 10:11:27 CET 2017 count=0" >> ~/.android/repositories.cfg 
+
+# Install Android Build Tool and Libraries
+RUN $ANDROID_HOME/tools/bin/sdkmanager --update
 
 # Chromium dependencies
 RUN apt install google-chrome-stable \
