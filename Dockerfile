@@ -44,8 +44,7 @@ RUN curl -L -O https://download.java.net/java/GA/jdk10/10.0.2/19aef61b3812448186
     mv jdk-10.0.2 /usr/lib/jvm && \
     rm openjdk-10.0.2_linux-x64_bin.tar.gz
 
-
- RUN update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-se-7u75-ri/bin/java" 1 && \
+RUN update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-se-7u75-ri/bin/java" 1 && \
      update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-se-8u40-ri/bin/java" 1 && \
      update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-9.0.4/bin/java" 1 && \
      update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-10.0.2/bin/java" 1 
