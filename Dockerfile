@@ -50,14 +50,19 @@ RUN curl -L -O https://download.java.net/java/GA/jdk10/10.0.2/19aef61b3812448186
      update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-9.0.4/bin/java" 1 && \
      update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-10.0.2/bin/java" 1 
 
-
+ENV JAVA_HOME="/usr/lib/jvm/jdk-9.0.4"
+ENV JAVA_HOME7="/usr/lib/jvm/java-se-7u75-ri"
+ENV JAVA_HOME8="/usr/lib/jvm/java-se-8u40-ri"
+ENV JAVA_HOME9="/usr/lib/jvm/jdk-9.0.4"
+ENV JAVA_HOME10="/usr/lib/jvm/jdk-10.0.2"
+ENV JAVA_HOME11="/usr/lib/jvm/java-11-openjdk-amd64"
 
 # update "cacerts" bundle to use Debian's CA certificates (and make sure it stays up-to-date with changes to Debian's store)
 # see https://github.com/docker-library/openjdk/issues/327
 #     http://rabexc.org/posts/certificates-not-working-java#comment-4099504075
 #     https://salsa.debian.org/java-team/ca-certificates-java/blob/3e51a84e9104823319abeb31f880580e46f45a98/debian/jks-keystore.hook.in
 #     https://git.alpinelinux.org/aports/tree/community/java-cacerts/APKBUILD?id=761af65f38b4570093461e6546dcf6b179d2b624#n29
-RUN export JAVA_HOME="/usr/lib/jvm/jdk-9.0.4" && echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
+RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
     { \
     		echo '#!/usr/bin/env bash'; \
     		echo 'set -Eeuo pipefail'; \
@@ -76,13 +81,6 @@ RUN export JAVA_HOME="/usr/lib/jvm/jdk-9.0.4" && echo "JAVA_HOME is set to: $JAV
 # basic smoke test
     javac --version; \
     java --version
-
-ENV JAVA_HOME="/usr/lib/jvm/jdk-9.0.4"
-ENV JAVA_HOME7="/usr/lib/jvm/java-se-7u75-ri"
-ENV JAVA_HOME8="/usr/lib/jvm/java-se-8u40-ri"
-ENV JAVA_HOME9="/usr/lib/jvm/jdk-9.0.4"
-ENV JAVA_HOME10="/usr/lib/jvm/jdk-10.0.2"
-ENV JAVA_HOME11="/usr/lib/jvm/java-11-openjdk-amd64"
 
 #install Maven
 ENV MAVEN_VERSION 3.6.0
