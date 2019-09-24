@@ -82,7 +82,7 @@ RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
     java --version
 
 #install Maven
-ENV MAVEN_VERSION 3.6.0
+ENV MAVEN_VERSION 3.6.2
 
 RUN curl -L -O http://www-eu.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
     tar xzf apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
