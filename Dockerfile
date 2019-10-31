@@ -150,7 +150,7 @@ RUN pecl install -o -f redis \
   &&  docker-php-ext-enable redis
 
 RUN docker-php-ext-configure zip --with-libzip
-RUN docker-php-ext-install exif fileinfo gd intl mbstring pdo_mysql opcache sockets zip xsl
+RUN docker-php-ext-install exif fileinfo gd intl mbstring pdo_mysql mysqli opcache sockets zip xsl
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
     && chmod +x /usr/bin/composer
