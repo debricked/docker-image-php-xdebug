@@ -142,7 +142,7 @@ RUN apt install google-chrome-stable \
     dbus-x11 -yqq > /dev/null
 
 RUN pecl install apcu \
-    && pecl install xdebug-2.7.1 \
+    && pecl install xdebug-2.8.0 \
     && docker-php-ext-enable apcu xdebug
 
 RUN pecl install -o -f redis \
