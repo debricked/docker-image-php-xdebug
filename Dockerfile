@@ -22,7 +22,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
 
 RUN apt update && apt upgrade -y && apt install unzip mariadb-client git zlibc zlib1g zlib1g-dev libzip-dev libicu-dev \
     libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk ca-certificates p11-kit -y
-    
+
 RUN cd /tmp && git clone https://github.com/opsengine/cpulimit.git && cd cpulimit && make && \
     cp src/cpulimit /usr/bin && chmod +x /usr/bin/cpulimit
 
@@ -77,6 +77,15 @@ RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
     } > /etc/ca-certificates/update.d/docker-openjdk; \
     chmod +x /etc/ca-certificates/update.d/docker-openjdk; \
     /etc/ca-certificates/update.d/docker-openjdk; \
+
+#Manually add certificates for dl.google.com and repo.jfrog.org to java 10.0.2 since they aren't added automatically
+RUN openssl s_client -showcerts -connect repo.jfrog.org:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >jfrog.PEM \
+    && yes | keytool -import -alias jfrogCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file jfrog.PEM -storepass changeit \
+    && openssl s_client -showcerts -connect dl.google.com:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >dlGoogle.PEM \
+    && yes | keytool -import -alias dlGoogleCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file dlGoogle.PEM -storepass changeit \
+    && rm dlGoogle.PEM \
+    && rm jfrog.PEM
+
 # https://github.com/docker-library/openjdk/issues/331#issuecomment-498834472
     find "$JAVA_HOME/lib" -name '*.so' -exec dirname '{}' ';' | sort -u > /etc/ld.so.conf.d/docker-openjdk.conf; \
     ldconfig; \
