@@ -1,4 +1,4 @@
-FROM php:7.3-fpm
+FROM php:7.4-fpm
 
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 # Fixes problems with Puppeteer (Chromium API)
@@ -21,7 +21,8 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     mkdir -p /usr/share/man/man1
 
 RUN apt update && apt upgrade -y && apt install unzip mariadb-client git zlibc zlib1g zlib1g-dev libzip-dev libicu-dev \
-    libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk ca-certificates p11-kit -y \
+    libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk ca-certificates p11-kit \
+    libonig-dev libgcrypt20-dev -y \
     && yarn global add bower
 
 RUN cd /tmp && git clone https://github.com/opsengine/cpulimit.git && cd cpulimit && make && \
@@ -78,7 +79,7 @@ RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
     } > /etc/ca-certificates/update.d/docker-openjdk; \
     chmod +x /etc/ca-certificates/update.d/docker-openjdk; \
     /etc/ca-certificates/update.d/docker-openjdk; \
-
+\
 #Manually add certificates for dl.google.com and repo.jfrog.org to java 10.0.2 since they aren't added automatically
     openssl s_client -showcerts -connect repo.jfrog.org:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >jfrog.PEM; \
     yes | keytool -import -alias jfrogCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file jfrog.PEM -storepass changeit; \
@@ -154,14 +155,14 @@ RUN apt install google-chrome-stable \
     dbus-x11 -yqq > /dev/null
 
 RUN pecl install apcu \
-    && pecl install xdebug-2.8.0 \
+    && pecl install xdebug-2.9.0 \
     && docker-php-ext-enable apcu xdebug
 
 RUN pecl install -o -f redis \
   &&  rm -rf /tmp/pear \
   &&  docker-php-ext-enable redis
 
-RUN docker-php-ext-configure zip --with-libzip
+RUN docker-php-ext-configure zip
 RUN docker-php-ext-install exif fileinfo gd intl mbstring pdo_mysql mysqli opcache sockets zip xsl
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
