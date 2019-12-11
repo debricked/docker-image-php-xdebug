@@ -120,7 +120,7 @@ ENV PATH ${GRADLE_HOME}/bin:${PATH}
 # Install pip
 RUN apt install python3-pip
 #Install pipenv
-RUN pip install pipenv
+RUN pip install pipdeptree
 #install Gdub
 RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \ 
   && dougborg-gdub-ebe14f1/install && rm -r dougborg-gdub-ebe14f1
