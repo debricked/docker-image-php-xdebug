@@ -80,11 +80,14 @@ RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
     chmod +x /etc/ca-certificates/update.d/docker-openjdk; \
     /etc/ca-certificates/update.d/docker-openjdk; \
 \
-#Manually add certificates for dl.google.com and repo.jfrog.org to java 10.0.2 since they aren't added automatically
+#Manually add certificates for dl.google.com repo.jfrog.org and maven.fabric.io to java 10.0.2 since they aren't added automatically
     openssl s_client -showcerts -connect repo.jfrog.org:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >jfrog.PEM; \
     yes | keytool -import -alias jfrogCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file jfrog.PEM -storepass changeit; \
     openssl s_client -showcerts -connect dl.google.com:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >dlGoogle.PEM; \
     yes | keytool -import -alias dlGoogleCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file dlGoogle.PEM -storepass changeit; \
+    openssl s_client -showcerts -connect maven.fabric.io:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >mavenFabricIo.PEM; \
+    yes | keytool -import -alias mavenFabricIoCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file mavenFabricIo.PEM -storepass changeit; \
+    rm mavenFabricIo.PEM; \
     rm dlGoogle.PEM; \
     rm jfrog.PEM; \
 # https://github.com/docker-library/openjdk/issues/331#issuecomment-498834472
@@ -95,7 +98,7 @@ RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
     java --version
 
 #install Maven
-ENV MAVEN_VERSION 3.6.2
+ENV MAVEN_VERSION 3.6.3
 
 RUN curl -L -O http://www-eu.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
     tar xzf apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
