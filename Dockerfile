@@ -122,6 +122,7 @@ ENV GRADLE_HOME /opt/gradle/gradle-${GRADLE_VERSION}
 ENV PATH ${GRADLE_HOME}/bin:${PATH}
 # Install python and pip and related dev packages. 
 RUN apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y && pip3 install pipenv
+
 #install Gdub
 RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \ 
   && dougborg-gdub-ebe14f1/install && rm -r dougborg-gdub-ebe14f1
