@@ -98,27 +98,28 @@ RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
     java --version
 
 #install Maven
+ENV BIN_DIRECTORY=/usr/local/bin
 ENV MAVEN_VERSION 3.6.3
-
-RUN curl -L -O http://www-eu.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
-    tar xzf apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
-    ln -s apache-maven-${MAVEN_VERSION} apache-maven && \
-    mv apache-maven-${MAVEN_VERSION} /usr/lib && \
-    rm apache-maven-${MAVEN_VERSION}-bin.tar.gz
-
-ENV M2_HOME /usr/lib/mvn
-ENV MAVEN_HOME /usr/lib/apache-maven-${MAVEN_VERSION}
+ENV M2_HOME $BIN_DIRECTORY/maveninstallation
+ENV MAVEN_HOME $BIN_DIRECTORY/maveninstallation
 ENV PATH $MAVEN_HOME/bin:$PATH
+
+RUN curl -L -O http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+  tar -zxvf apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+  rm apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+  mv apache-maven-$MAVEN_VERSION $BIN_DIRECTORY/maveninstallation && \
+  ln -s $BIN_DIRECTORY/maveninstallation/bin/mvn /usr/local/bin/mvn
 
 #install Gradle
 ENV GRADLE_VERSION 5.5.1
 
 RUN cd / \
     && curl -L -O https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip \
-    && unzip -d /opt/gradle gradle-${GRADLE_VERSION}-bin.zip \
-    && rm /gradle-${GRADLE_VERSION}-bin.zip
+    && unzip -d $BIN_DIRECTORY/gradleinstallation gradle-${GRADLE_VERSION}-bin.zip \
+    && rm /gradle-${GRADLE_VERSION}-bin.zip \
+    && ln -s $BIN_DIRECTORY/gradleinstallation/gradle-${GRADLE_VERSION}/bin/gradle /usr/local/bin/gradle
 
-ENV GRADLE_HOME /opt/gradle/gradle-${GRADLE_VERSION}
+ENV GRADLE_HOME $BIN_DIRECTORY/gradleinstallation/gradle-${GRADLE_VERSION}
 ENV PATH ${GRADLE_HOME}/bin:${PATH}
 # Install python and pip and related dev packages. 
 RUN apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y && pip3 install pipenv
