@@ -149,7 +149,7 @@ RUN echo "### User Sources for Android SDK Manager" > ~/.android/repositories.cf
 # Install Android Build Tool and Libraries
 RUN $ANDROID_HOME/tools/bin/sdkmanager --update
 
-# Install Bazel build tool
+# Install Bazel Build Tool
 ENV BAZEL_VERSION 2.1.0
 
 RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add - \
