@@ -108,7 +108,7 @@ RUN curl -L -O http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binar
   tar -zxvf apache-maven-$MAVEN_VERSION-bin.tar.gz && \
   rm apache-maven-$MAVEN_VERSION-bin.tar.gz && \
   mv apache-maven-$MAVEN_VERSION $BIN_DIRECTORY/maveninstallation && \
-  ln -s $BIN_DIRECTORY/maveninstallation/bin/mvn /usr/local/bin/mvn
+  ln -s $BIN_DIRECTORY/maveninstallation/bin/mvn $BIN_DIRECTORY/mvn
 
 #install Gradle
 ENV GRADLE_VERSION 5.5.1
@@ -117,7 +117,7 @@ RUN cd / \
     && curl -L -O https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip \
     && unzip -d $BIN_DIRECTORY/gradleinstallation gradle-${GRADLE_VERSION}-bin.zip \
     && rm /gradle-${GRADLE_VERSION}-bin.zip \
-    && ln -s $BIN_DIRECTORY/gradleinstallation/gradle-${GRADLE_VERSION}/bin/gradle /usr/local/bin/gradle
+    && ln -s $BIN_DIRECTORY/gradleinstallation/gradle-${GRADLE_VERSION}/bin/gradle $BIN_DIRECTORY/gradle
 
 ENV GRADLE_HOME $BIN_DIRECTORY/gradleinstallation/gradle-${GRADLE_VERSION}
 ENV PATH ${GRADLE_HOME}/bin:${PATH}
@@ -148,6 +148,14 @@ RUN echo "### User Sources for Android SDK Manager" > ~/.android/repositories.cf
 
 # Install Android Build Tool and Libraries
 RUN $ANDROID_HOME/tools/bin/sdkmanager --update
+
+# Install Bazel build tool
+ENV BAZEL_VERSION 2.1.0
+
+RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add - \
+    && echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list \
+    && apt update && apt install bazel-$BAZEL_VERSION \
+    && ln -s /usr/bin/bazel-$BAZEL_VERSION $BIN_DIRECTORY/bazel
 
 # Chromium dependencies
 RUN apt install google-chrome-stable \
