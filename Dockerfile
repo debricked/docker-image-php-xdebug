@@ -80,16 +80,27 @@ RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
     chmod +x /etc/ca-certificates/update.d/docker-openjdk; \
     /etc/ca-certificates/update.d/docker-openjdk; \
 \
-#Manually add certificates for dl.google.com repo.jfrog.org and maven.fabric.io to java 10.0.2 since they aren't added automatically
-    openssl s_client -showcerts -connect repo.jfrog.org:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >jfrog.PEM; \
-    yes | keytool -import -alias jfrogCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file jfrog.PEM -storepass changeit; \
-    openssl s_client -showcerts -connect dl.google.com:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >dlGoogle.PEM; \
-    yes | keytool -import -alias dlGoogleCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file dlGoogle.PEM -storepass changeit; \
-    openssl s_client -showcerts -connect maven.fabric.io:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >mavenFabricIo.PEM; \
-    yes | keytool -import -alias mavenFabricIoCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file mavenFabricIo.PEM -storepass changeit; \
-    rm mavenFabricIo.PEM; \
-    rm dlGoogle.PEM; \
-    rm jfrog.PEM; \
+#Manually add certificates for some maven and gradle repositories to java 8 and 10 since they aren't added automatically
+    java_version=8; \
+    java_certificates="java-se-8u40-ri/jre/lib/security/cacerts jdk-10.0.2/lib/security/cacerts"; \
+    for java_certificate in ${java_certificates}; do \
+        openssl s_client -showcerts -connect repo.jfrog.org:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >jfrog.PEM; \
+        yes | keytool -import -alias "jfrogCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file jfrog.PEM -storepass changeit; \
+        openssl s_client -showcerts -connect dl.google.com:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >dlGoogle.PEM; \
+        yes | keytool -import -alias "dlGoogleCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file dlGoogle.PEM -storepass changeit; \
+        openssl s_client -showcerts -connect maven.fabric.io:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >mavenFabricIo.PEM; \
+        yes | keytool -import -alias "mavenFabricIoCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file mavenFabricIo.PEM -storepass changeit; \
+        openssl s_client -showcerts -connect jcenter.bintray.com:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >jcenter.PEM; \
+        yes | keytool -import -alias "jcenterCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file jcenter.PEM -storepass changeit; \
+        openssl s_client -showcerts -connect repo1.maven.org:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >mavenOrg.PEM; \
+        yes | keytool -import -alias "mavenOrgCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file mavenOrg.PEM -storepass changeit; \
+        rm mavenOrg.PEM; \
+        rm jcenter.PEM; \
+        rm mavenFabricIo.PEM; \
+        rm dlGoogle.PEM; \
+        rm jfrog.PEM; \
+        java_version=10; \
+    done; \
 # https://github.com/docker-library/openjdk/issues/331#issuecomment-498834472
     find "$JAVA_HOME/lib" -name '*.so' -exec dirname '{}' ';' | sort -u > /etc/ld.so.conf.d/docker-openjdk.conf; \
     ldconfig; \
@@ -122,7 +133,7 @@ RUN cd / \
 ENV GRADLE_HOME $BIN_DIRECTORY/gradleinstallation/gradle-${GRADLE_VERSION}
 ENV PATH ${GRADLE_HOME}/bin:${PATH}
 # Install python and pip and related dev packages. 
-RUN apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y && pip3 install pipenv
+RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y && pip3 install pipenv
 
 #install Gdub
 RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \ 
