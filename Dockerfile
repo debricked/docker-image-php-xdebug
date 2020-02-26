@@ -87,6 +87,12 @@ RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
     yes | keytool -import -alias dlGoogleCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file dlGoogle.PEM -storepass changeit; \
     openssl s_client -showcerts -connect maven.fabric.io:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >mavenFabricIo.PEM; \
     yes | keytool -import -alias mavenFabricIoCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file mavenFabricIo.PEM -storepass changeit; \
+    openssl s_client -showcerts -connect jcenter.bintray.com:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >jcenter.PEM; \
+    yes | keytool -import -alias jcenterCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file jcenter.PEM -storepass changeit; \
+    openssl s_client -showcerts -connect repo1.maven.org:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >mavenOrg.PEM; \
+    yes | keytool -import -alias mavenOrgCert -keystore /usr/lib/jvm/jdk-10.0.2/lib/security/cacerts -file mavenOrg.PEM -storepass changeit; \
+    rm mavenOrg.PEM; \
+    rm jcenter.PEM; \
     rm mavenFabricIo.PEM; \
     rm dlGoogle.PEM; \
     rm jfrog.PEM; \
@@ -122,7 +128,7 @@ RUN cd / \
 ENV GRADLE_HOME $BIN_DIRECTORY/gradleinstallation/gradle-${GRADLE_VERSION}
 ENV PATH ${GRADLE_HOME}/bin:${PATH}
 # Install python and pip and related dev packages. 
-RUN apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y && pip3 install pipenv
+RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y && pip3 install pipenv
 
 #install Gdub
 RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \ 
