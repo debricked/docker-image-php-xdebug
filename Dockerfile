@@ -90,12 +90,15 @@ RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
         yes | keytool -import -alias "dlGoogleCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file dlGoogle.PEM -storepass changeit; \
         openssl s_client -showcerts -connect maven.fabric.io:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >mavenFabricIo.PEM; \
         yes | keytool -import -alias "mavenFabricIoCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file mavenFabricIo.PEM -storepass changeit; \
-        openssl s_client -showcerts -connect jcenter.bintray.com:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >jcenter.PEM; \
-        yes | keytool -import -alias "jcenterCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file jcenter.PEM -storepass changeit; \
+        openssl s_client -showcerts -connect bintray.com:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >bintray.PEM; \
+        yes | keytool -import -alias "bintrayCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file bintray.PEM -storepass changeit; \
+        openssl s_client -showcerts -connect jfrog.com:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >jfrogCom.PEM; \
+        yes | keytool -import -alias "jfrogComCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file jfrogCom.PEM -storepass changeit; \
         openssl s_client -showcerts -connect repo1.maven.org:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >mavenOrg.PEM; \
         yes | keytool -import -alias "mavenOrgCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file mavenOrg.PEM -storepass changeit; \
         rm mavenOrg.PEM; \
-        rm jcenter.PEM; \
+        rm jfrogCom.PEM; \
+        rm bintray.PEM; \
         rm mavenFabricIo.PEM; \
         rm dlGoogle.PEM; \
         rm jfrog.PEM; \
