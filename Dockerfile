@@ -182,10 +182,8 @@ RUN apt install google-chrome-stable \
     xvfb \
     dbus-x11 -yqq > /dev/null
 
-RUN apt install librdkafka-dev -yqq \
-    && pecl install rdkafka \
-    && pecl install apcu \
-    && pecl install xdebug-2.9.5 \
+RUN pecl install apcu \
+    && pecl install xdebug-2.9.0 \
     && docker-php-ext-enable apcu xdebug
 
 RUN pecl install -o -f redis \
