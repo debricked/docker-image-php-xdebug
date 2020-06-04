@@ -22,7 +22,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
 
 RUN apt update && apt upgrade -y && apt install unzip mariadb-client git zlibc zlib1g zlib1g-dev libzip-dev libicu-dev \
     libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk ca-certificates p11-kit \
-    libonig-dev libgcrypt20-dev -y \
+    libonig-dev libgcrypt20-dev librabbitmq-dev -y \
     && yarn global add bower
 
 RUN cd /tmp && git clone https://github.com/opsengine/cpulimit.git && cd cpulimit && make && \
@@ -182,9 +182,10 @@ RUN apt install google-chrome-stable \
     xvfb \
     dbus-x11 -yqq > /dev/null
 
-RUN pecl install apcu \
+RUN pecl install amqp \
+    && pecl install apcu \
     && pecl install xdebug-2.9.5 \
-    && docker-php-ext-enable apcu xdebug
+    && docker-php-ext-enable apcu xdebug amqp
 
 RUN pecl install -o -f redis \
   &&  rm -rf /tmp/pear \
