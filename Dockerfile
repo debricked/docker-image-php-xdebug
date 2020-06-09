@@ -148,7 +148,7 @@ ENV JAVA_OPTS='-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee'
 ENV SDK_URL="https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip" \
     ANDROID_HOME="/usr/local/android-sdk" \
     ANDROID_VERSION=29 \
-    ANRDROID_BUILD_TOOLS_VESION=29.0.1
+    ANDROID_BUILD_TOOLS_VERSION=29.0.1
 
 # Download Android SDK
 RUN mkdir "$ANDROID_HOME" .android \
