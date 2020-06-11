@@ -199,14 +199,13 @@ RUN pecl install -o -f redis \
 ENV DOTNET_ROOT=/usr/bin/dotnet
 ENV PATH=$PATH:/usr/bin/dotnet
 
-#Install dotnet
+#Install dotnet and check so that it actually works
 RUN curl -SL --output dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/0c795076-b679-457e-8267-f9dd20a8ca28/02446ea777b6f5a5478cd3244d8ed65b/dotnet-sdk-3.1.300-linux-x64.tar.gz \
     && mkdir -p /usr/bin/dotnet \
     && tar zxf dotnet.tar.gz -C /usr/bin/dotnet \
-    && rm dotnet.tar.gz
-
-#Check so that it actually works
-RUN dotnet help
+    && chmod +x /usr/bin/dotnet/dotnet \
+    && rm dotnet.tar.gz \
+    && dotnet help
 
 RUN docker-php-ext-configure zip
 RUN docker-php-ext-install exif fileinfo gd intl mbstring pdo_mysql mysqli opcache sockets zip xsl
