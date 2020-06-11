@@ -11,48 +11,53 @@ RUN apt update && apt install gnupg -y
 
 RUN apt install software-properties-common dirmngr -y
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list && \
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list \
 # Need backports for openjdk 11 package
-    echo 'deb http://deb.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/backports.list && \
-    mkdir -p /usr/share/man/man1
+    && echo 'deb http://deb.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/backports.list \
+    && mkdir -p /usr/share/man/man1
 
-RUN apt update && apt upgrade -y && apt install unzip mariadb-client git zlibc zlib1g zlib1g-dev libzip-dev libicu-dev \
-    libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk ca-certificates p11-kit \
-    libonig-dev libgcrypt20-dev librabbitmq-dev -y \
+RUN apt update && apt upgrade -y \
+    && apt install unzip mariadb-client git zlibc zlib1g zlib1g-dev libzip-dev libicu-dev \
+    libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk \
+    ca-certificates p11-kit libonig-dev libgcrypt20-dev librabbitmq-dev -y \
     && yarn global add bower
 
-RUN cd /tmp && git clone https://github.com/opsengine/cpulimit.git && cd cpulimit && make && \
-    cp src/cpulimit /usr/bin && chmod +x /usr/bin/cpulimit
+RUN cd /tmp \
+    && git clone https://github.com/opsengine/cpulimit.git \
+    && cd cpulimit \
+    && make \
+    && cp src/cpulimit /usr/bin \
+    && chmod +x /usr/bin/cpulimit
 
-RUN curl -L -O https://download.java.net/openjdk/jdk7u75/ri/jdk_ri-7u75-b13-linux-x64-18_dec_2014.tar.gz && \
-    tar -xvf jdk_ri-7u75-b13-linux-x64-18_dec_2014.tar.gz && \
-    mkdir -p /usr/lib/jvm && \
-    mv java-se-7u75-ri /usr/lib/jvm && \ 
-    rm jdk_ri-7u75-b13-linux-x64-18_dec_2014.tar.gz
+RUN curl -L -O https://download.java.net/openjdk/jdk7u75/ri/jdk_ri-7u75-b13-linux-x64-18_dec_2014.tar.gz \
+    && tar -xvf jdk_ri-7u75-b13-linux-x64-18_dec_2014.tar.gz \
+    && mkdir -p /usr/lib/jvm \
+    && mv java-se-7u75-ri /usr/lib/jvm \
+    && rm jdk_ri-7u75-b13-linux-x64-18_dec_2014.tar.gz
 
-RUN curl -L -O https://download.java.net/openjdk/jdk8u40/ri/jdk_ri-8u40-b25-linux-x64-10_feb_2015.tar.gz && \
-    tar -xvf jdk_ri-8u40-b25-linux-x64-10_feb_2015.tar.gz && \
-    mv java-se-8u40-ri /usr/lib/jvm && \
-    rm jdk_ri-8u40-b25-linux-x64-10_feb_2015.tar.gz
+RUN curl -L -O https://download.java.net/openjdk/jdk8u40/ri/jdk_ri-8u40-b25-linux-x64-10_feb_2015.tar.gz \
+    && tar -xvf jdk_ri-8u40-b25-linux-x64-10_feb_2015.tar.gz \
+    && mv java-se-8u40-ri /usr/lib/jvm \
+    && rm jdk_ri-8u40-b25-linux-x64-10_feb_2015.tar.gz
 
-RUN curl -L -O https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz && \
-    tar -xvf openjdk-9.0.4_linux-x64_bin.tar.gz && \
-    mv jdk-9.0.4 /usr/lib/jvm && \
-    rm openjdk-9.0.4_linux-x64_bin.tar.gz
+RUN curl -L -O https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz \
+    && tar -xvf openjdk-9.0.4_linux-x64_bin.tar.gz \
+    && mv jdk-9.0.4 /usr/lib/jvm \
+    && rm openjdk-9.0.4_linux-x64_bin.tar.gz
 
-RUN curl -L -O https://download.java.net/java/GA/jdk10/10.0.2/19aef61b38124481863b1413dce1855f/13/openjdk-10.0.2_linux-x64_bin.tar.gz && \
-    tar -xvf openjdk-10.0.2_linux-x64_bin.tar.gz && \
-    mv jdk-10.0.2 /usr/lib/jvm && \
-    rm openjdk-10.0.2_linux-x64_bin.tar.gz
+RUN curl -L -O https://download.java.net/java/GA/jdk10/10.0.2/19aef61b38124481863b1413dce1855f/13/openjdk-10.0.2_linux-x64_bin.tar.gz \
+    && tar -xvf openjdk-10.0.2_linux-x64_bin.tar.gz \
+    && mv jdk-10.0.2 /usr/lib/jvm \
+    && rm openjdk-10.0.2_linux-x64_bin.tar.gz
 
-RUN update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-se-7u75-ri/bin/java" 1 && \
-     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-se-8u40-ri/bin/java" 1 && \
-     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-9.0.4/bin/java" 1 && \
-     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-10.0.2/bin/java" 1 
+RUN update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-se-7u75-ri/bin/java" 1 \
+    && update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-se-8u40-ri/bin/java" 1 \
+    && update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-9.0.4/bin/java" 1 \
+    && update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-10.0.2/bin/java" 1
 
 ENV JAVA_HOME="/usr/lib/jvm/jdk-9.0.4"
 ENV JAVA_HOME7="/usr/lib/jvm/java-se-7u75-ri"
@@ -118,11 +123,11 @@ ENV M2_HOME $BIN_DIRECTORY/maveninstallation
 ENV MAVEN_HOME $BIN_DIRECTORY/maveninstallation
 ENV PATH $MAVEN_HOME/bin:$PATH
 
-RUN curl -L -O http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz && \
-  tar -zxvf apache-maven-$MAVEN_VERSION-bin.tar.gz && \
-  rm apache-maven-$MAVEN_VERSION-bin.tar.gz && \
-  mv apache-maven-$MAVEN_VERSION $BIN_DIRECTORY/maveninstallation && \
-  ln -s $BIN_DIRECTORY/maveninstallation/bin/mvn $BIN_DIRECTORY/mvn
+RUN curl -L -O http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz \
+  && tar -zxvf apache-maven-$MAVEN_VERSION-bin.tar.gz \
+  && rm apache-maven-$MAVEN_VERSION-bin.tar.gz \
+  && mv apache-maven-$MAVEN_VERSION $BIN_DIRECTORY/maveninstallation \
+  && ln -s $BIN_DIRECTORY/maveninstallation/bin/mvn $BIN_DIRECTORY/mvn
 
 #install Gradle
 ENV GRADLE_VERSION 5.5.1
@@ -135,11 +140,11 @@ RUN cd / \
 
 ENV GRADLE_HOME $BIN_DIRECTORY/gradleinstallation/gradle-${GRADLE_VERSION}
 ENV PATH ${GRADLE_HOME}/bin:${PATH}
-# Install python and pip and related dev packages. 
+# Install python and pip and related dev packages.
 RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y && pip3 install pipenv
 
 #install Gdub
-RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \ 
+RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \
   && dougborg-gdub-ebe14f1/install && rm -r dougborg-gdub-ebe14f1
 
 # Set the environment and URL
@@ -158,7 +163,7 @@ RUN mkdir "$ANDROID_HOME" .android \
     && rm sdk.zip \
     && yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
 
-RUN echo "### User Sources for Android SDK Manager" > ~/.android/repositories.cfg && echo "#Fri Nov 03 10:11:27 CET 2017 count=0" >> ~/.android/repositories.cfg 
+RUN echo "### User Sources for Android SDK Manager" > ~/.android/repositories.cfg && echo "#Fri Nov 03 10:11:27 CET 2017 count=0" >> ~/.android/repositories.cfg
 
 # Install Android Build Tool and Libraries
 RUN $ANDROID_HOME/tools/bin/sdkmanager --update
@@ -190,6 +195,17 @@ RUN pecl install amqp \
 RUN pecl install -o -f redis \
   &&  rm -rf /tmp/pear \
   &&  docker-php-ext-enable redis
+
+ENV DOTNET_ROOT=/usr/bin/dotnet
+ENV PATH=$PATH:/usr/bin/dotnet
+
+#Install dotnet and check so that it actually works
+RUN curl -SL --output dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/0c795076-b679-457e-8267-f9dd20a8ca28/02446ea777b6f5a5478cd3244d8ed65b/dotnet-sdk-3.1.300-linux-x64.tar.gz \
+    && mkdir -p /usr/bin/dotnet \
+    && tar zxf dotnet.tar.gz -C /usr/bin/dotnet \
+    && chmod +x /usr/bin/dotnet/dotnet \
+    && rm dotnet.tar.gz \
+    && dotnet help
 
 RUN docker-php-ext-configure zip
 RUN docker-php-ext-install exif fileinfo gd intl mbstring pdo_mysql mysqli opcache sockets zip xsl
