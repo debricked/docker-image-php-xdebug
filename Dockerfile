@@ -140,8 +140,8 @@ RUN cd / \
 
 ENV GRADLE_HOME $BIN_DIRECTORY/gradleinstallation/gradle-${GRADLE_VERSION}
 ENV PATH ${GRADLE_HOME}/bin:${PATH}
-# Install python and pip and related dev packages.
-RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y && pip3 install pipenv
+# Install go, python and pip and related dev packages.
+RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev golang-go -y && pip3 install pipenv
 
 #install Gdub
 RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \
@@ -196,15 +196,16 @@ RUN pecl install -o -f redis \
   &&  rm -rf /tmp/pear \
   &&  docker-php-ext-enable redis
 
-ENV DOTNET_ROOT=/usr/bin/dotnet
-ENV PATH=$PATH:/usr/bin/dotnet
+ENV DOTNET_ROOT ${BIN_DIRECTORY}/dotnet-3.1.300
+ENV PATH $PATH:${DOTNET_ROOT}
 
 #Install dotnet and check so that it actually works
 RUN curl -SL --output dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/0c795076-b679-457e-8267-f9dd20a8ca28/02446ea777b6f5a5478cd3244d8ed65b/dotnet-sdk-3.1.300-linux-x64.tar.gz \
-    && mkdir -p /usr/bin/dotnet \
-    && tar zxf dotnet.tar.gz -C /usr/bin/dotnet \
-    && chmod +x /usr/bin/dotnet/dotnet \
+    && mkdir -p "${DOTNET_ROOT}" \
+    && tar zxf dotnet.tar.gz -C "${DOTNET_ROOT}" \
+    && chmod +x "${DOTNET_ROOT}/dotnet" \
     && rm dotnet.tar.gz \
+    && ln -s "${DOTNET_ROOT}/dotnet" "${BIN_DIRECTORY}/dotnet" \
     && dotnet help
 
 RUN docker-php-ext-configure zip
