@@ -140,8 +140,18 @@ RUN cd / \
 
 ENV GRADLE_HOME $BIN_DIRECTORY/gradleinstallation/gradle-${GRADLE_VERSION}
 ENV PATH ${GRADLE_HOME}/bin:${PATH}
+ENV GO_VERSION 1.13.14
 # Install go, python and pip and related dev packages.
-RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev golang-go -y && pip3 install pipenv
+RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y \
+    && pip3 install pipenv \
+    && cd / \
+    && curl -L -O https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz \
+    && tar -xvf go${GO_VERSION}.linux-amd64.tar.gz \
+    && mv go ${BIN_DIRECTORY}/golang \
+    && rm go${GO_VERSION}.linux-amd64.tar.gz \
+    && ln -s ${BIN_DIRECTORY}/golang/bin/go ${BIN_DIRECTORY}/go
+ENV GOROOT ${BIN_DIRECTORY}/golang
+ENV PATH ${GOROOT}/bin:$PATH
 
 #install Gdub
 RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \
