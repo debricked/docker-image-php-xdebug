@@ -16,10 +16,8 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
     && curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
     && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list \
-# Need backports for openjdk 11 package
-    && echo 'deb http://deb.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/backports.list \
 # Need buster-backports in order to get a recent version of go
-    && echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list.d/backports.list \
+    && echo 'deb http://deb.debian.org/debian buster-backports main' > /etc/apt/sources.list.d/backports.list \
     && mkdir -p /usr/share/man/man1
 
 RUN apt update && apt upgrade -y \
