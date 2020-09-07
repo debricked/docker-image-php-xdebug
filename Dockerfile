@@ -18,6 +18,8 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
     && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list \
 # Need backports for openjdk 11 package
     && echo 'deb http://deb.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/backports.list \
+# Need buster-backports in order to get a recent version of go
+    && echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list.d/backports.list \
     && mkdir -p /usr/share/man/man1
 
 RUN apt update && apt upgrade -y \
@@ -141,18 +143,12 @@ RUN cd / \
 
 ENV GRADLE_HOME $BIN_DIRECTORY/gradleinstallation/gradle-${GRADLE_VERSION}
 ENV PATH ${GRADLE_HOME}/bin:${PATH}
-ENV GO_VERSION 1.13.14
-# Install go, python and pip and related dev packages.
-RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y \
-    && pip3 install pipenv \
-    && cd / \
-    && curl -L -O https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz \
-    && tar -xvf go${GO_VERSION}.linux-amd64.tar.gz \
-    && mv go ${BIN_DIRECTORY}/golang \
-    && rm go${GO_VERSION}.linux-amd64.tar.gz \
-    && ln -s ${BIN_DIRECTORY}/golang/bin/go ${BIN_DIRECTORY}/go
-ENV GOROOT ${BIN_DIRECTORY}/golang
-ENV PATH ${GOROOT}/bin:$PATH
+
+# Install python and pip and related dev packages.
+RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y && pip3 install pipenv
+
+# Install Go from buster-backports
+RUN apt install -t buster-backports golang-go -y
 
 #install Gdub
 RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \
