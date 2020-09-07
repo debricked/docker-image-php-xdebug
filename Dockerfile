@@ -143,7 +143,8 @@ ENV GRADLE_HOME $BIN_DIRECTORY/gradleinstallation/gradle-${GRADLE_VERSION}
 ENV PATH ${GRADLE_HOME}/bin:${PATH}
 
 # Install python and pip and related dev packages.
-RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y && pip3 install pipenv
+RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y \
+    && pip3 install pipenv
 
 # Install Go from buster-backports
 RUN apt install -t buster-backports golang-go -y
