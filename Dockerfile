@@ -232,6 +232,7 @@ RUN echo "date.timezone = UTC" >> /usr/local/etc/php/php.ini \
     && echo "apc.shm_size = 512M" >> /usr/local/etc/php/php.ini \
     && echo "apc.enabled = 1" >> /usr/local/etc/php/php.ini \
     && echo "apc.enable_cli = 1" >> /usr/local/etc/php/php.ini \
+    && echo "zookeeper.recv_timeout=100000" >> /usr/local/etc/php/php.ini \
     && echo /usr/local/etc/php/php.ini
 
 RUN apt install automake nasm libtool -y && git clone git://github.com/mozilla/mozjpeg.git && cd mozjpeg \
