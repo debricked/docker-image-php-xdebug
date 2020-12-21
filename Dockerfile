@@ -7,7 +7,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1
 # https://github.com/SeleniumHQ/docker-selenium/issues/87
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
-RUN apt update && apt install gnupg -y<
+RUN apt update && apt install gnupg -y
 
 RUN apt install software-properties-common dirmngr -y
 
