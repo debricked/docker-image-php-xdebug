@@ -7,7 +7,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1
 # https://github.com/SeleniumHQ/docker-selenium/issues/87
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 
-RUN apt update && apt install gnupg -y
+RUN apt update && apt install gnupg -y<
 
 RUN apt install software-properties-common dirmngr -y
 
@@ -24,7 +24,7 @@ RUN apt update && apt upgrade -y \
     && apt install unzip mariadb-client git zlibc zlib1g zlib1g-dev libzip-dev libicu-dev \
     libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk \
     ca-certificates p11-kit libonig-dev libgcrypt20-dev librabbitmq-dev libzookeeper-mt-dev \
-    sudo -y \
+    sudo procps -y \
     && yarn global add bower
 
 RUN cd /tmp \
