@@ -151,7 +151,7 @@ RUN apt install -t buster-backports golang-go -y
 
 #install Gdub
 RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \
-  && gdubw-gdub-ebe14f1/install && rm -r gdubw-gdub-ebe14f1
+  && gdubw-gdub-3a5eca5/install && rm -r gdubw-gdub-3a5eca5
 
 # Set the environment and URL
 ENV JAVA_OPTS='-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee'
@@ -220,6 +220,10 @@ RUN docker-php-ext-install exif fileinfo gd intl mbstring pdo_mysql mysqli opcac
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
     && chmod +x /usr/bin/composer
+
+RUN  curl -SL --output local-php-security-checker 'https://github.com/fabpot/local-php-security-checker/releases/download/v1.0.0/local-php-security-checker_1.0.0_linux_amd64' \
+    && chmod +x local-php-security-checker \
+    && mv local-php-security-checker ${BIN_DIRECTORY}
 
 RUN echo "date.timezone = UTC" >> /usr/local/etc/php/php.ini \
     && echo "opcache.enable = 1" >> /usr/local/etc/php/php.ini \
