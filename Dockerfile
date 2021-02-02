@@ -186,6 +186,7 @@ RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add - \
 RUN apt install google-chrome-stable \
     libgtk2.0-0 \
     libnotify-dev \
+    libgbm-dev \
     libgconf-2-4 \
     libnss3 \
     libxss1 \
