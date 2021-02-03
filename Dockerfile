@@ -196,7 +196,7 @@ RUN apt install google-chrome-stable \
 
 RUN pecl install amqp \
     && pecl install apcu \
-    && pecl install xdebug-3.0.1 \
+    && pecl install xdebug-3.0.2 \
     && pecl install zookeeper-0.7.2 \
     && docker-php-ext-enable apcu xdebug amqp zookeeper
 
