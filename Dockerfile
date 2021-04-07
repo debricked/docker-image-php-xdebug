@@ -216,8 +216,13 @@ RUN curl -SL --output dotnet.tar.gz https://download.visualstudio.microsoft.com/
     && ln -s "${DOTNET_ROOT}/dotnet" "${BIN_DIRECTORY}/dotnet" \
     && dotnet help
 
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
 RUN docker-php-ext-configure zip
-RUN docker-php-ext-install exif fileinfo gd intl mbstring pdo_mysql mysqli opcache sockets zip xsl
+RUN chmod +x /usr/local/bin/install-php-extensions && sync \
+    && install-php-extensions exif fileinfo gd pdo_mysql mysqli pdo_pgsql \
+    sockets zip opcache intl xsl \
+    && docker-php-ext-install mbstring
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
     && chmod +x /usr/bin/composer
@@ -240,7 +245,8 @@ RUN echo "date.timezone = UTC" >> /usr/local/etc/php/php.ini \
     && echo "zookeeper.recv_timeout=100000" >> /usr/local/etc/php/php.ini \
     && echo /usr/local/etc/php/php.ini
 
-RUN apt install automake nasm libtool -y && git clone git://github.com/mozilla/mozjpeg.git && cd mozjpeg \
+RUN apt update && apt install automake nasm libtool -y \
+    && git clone git://github.com/mozilla/mozjpeg.git && cd mozjpeg \
     && git checkout v3.3.1 && autoreconf -fiv && ./configure --prefix=/opt/mozjpeg && make install
 
 RUN git clone --recursive https://github.com/pornel/pngquant.git \
