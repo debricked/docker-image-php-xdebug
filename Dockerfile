@@ -23,7 +23,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
 RUN apt update && apt upgrade -y \
     && apt install unzip mariadb-client git zlibc zlib1g zlib1g-dev libzip-dev libicu-dev \
     libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk \
-    ca-certificates p11-kit libonig-dev libgcrypt20-dev librabbitmq-dev libzookeeper-mt-dev \
+    ca-certificates p11-kit libonig-dev libgcrypt20-dev \
     sudo procps -y \
     && yarn global add bower
 
@@ -194,16 +194,6 @@ RUN apt install google-chrome-stable \
     xvfb \
     dbus-x11 -yqq > /dev/null
 
-RUN pecl install amqp \
-    && pecl install apcu \
-    && pecl install xdebug-3.0.2 \
-    && pecl install zookeeper-0.7.2 \
-    && docker-php-ext-enable apcu xdebug amqp zookeeper
-
-RUN pecl install -o -f redis \
-  &&  rm -rf /tmp/pear \
-  &&  docker-php-ext-enable redis
-
 ENV DOTNET_ROOT ${BIN_DIRECTORY}/dotnet-3.1.300
 ENV PATH $PATH:${DOTNET_ROOT}
 
@@ -220,8 +210,8 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 
 RUN docker-php-ext-configure zip
 RUN chmod +x /usr/local/bin/install-php-extensions && sync \
-    && install-php-extensions exif fileinfo gd pdo_mysql mysqli pdo_pgsql \
-    sockets zip opcache intl xsl \
+    && install-php-extensions amqp apcu exif fileinfo gd pdo_mysql mysqli pdo_pgsql redis \
+    sockets zip opcache intl xdebug xsl \
     && docker-php-ext-install mbstring
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
@@ -242,7 +232,6 @@ RUN echo "date.timezone = UTC" >> /usr/local/etc/php/php.ini \
     && echo "apc.shm_size = 512M" >> /usr/local/etc/php/php.ini \
     && echo "apc.enabled = 1" >> /usr/local/etc/php/php.ini \
     && echo "apc.enable_cli = 1" >> /usr/local/etc/php/php.ini \
-    && echo "zookeeper.recv_timeout=100000" >> /usr/local/etc/php/php.ini \
     && echo /usr/local/etc/php/php.ini
 
 RUN apt update && apt install automake nasm libtool -y \
