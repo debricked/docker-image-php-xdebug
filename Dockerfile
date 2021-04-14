@@ -26,7 +26,7 @@ RUN apt update && apt upgrade -y \
     ca-certificates p11-kit libonig-dev libgcrypt20-dev librabbitmq-dev libzookeeper-mt-dev \
     sudo procps -y \
     && yarn global add bower \
-    && npm install npm@latest -g
+    && npm -g install npm@7.9.0
 
 RUN cd /tmp \
     && git clone https://github.com/opsengine/cpulimit.git \
