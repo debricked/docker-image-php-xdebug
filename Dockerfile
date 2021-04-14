@@ -25,7 +25,8 @@ RUN apt update && apt upgrade -y \
     libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk \
     ca-certificates p11-kit libonig-dev libgcrypt20-dev \
     sudo procps -y \
-    && yarn global add bower
+    && yarn global add bower \
+    && npm -g install npm@^7.9.0
 
 RUN cd /tmp \
     && git clone https://github.com/opsengine/cpulimit.git \
