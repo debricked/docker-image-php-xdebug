@@ -6,6 +6,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1
 # "fake" dbus address to prevent errors
 # https://github.com/SeleniumHQ/docker-selenium/issues/87
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
+ENV BIN_DIRECTORY=/usr/local/bin
 
 RUN apt update && apt install gnupg -y
 
@@ -25,8 +26,26 @@ RUN apt update && apt upgrade -y \
     libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk \
     ca-certificates p11-kit libonig-dev libgcrypt20-dev \
     sudo procps -y \
-    && yarn global add bower \
-    && npm -g install npm@^7.9.0
+    && yarn global add bower
+
+# Install both npm 6 and npm 7 onto the image (use 'npm6 ...' and 'npm7 ...' in order to specify version)
+ENV NPM_6_NODE_VERSION 14.16.1
+ENV NPM_6_NODE_DIRECTORY ${BIN_DIRECTORY}/node-${NPM_6_NODE_VERSION}
+ENV NPM_7_NODE_VERSION 15.14.0
+ENV NPM_7_NODE_DIRECTORY ${BIN_DIRECTORY}/node-${NPM_7_NODE_VERSION}
+
+RUN curl -SL --output node-${NPM_6_NODE_VERSION}.tar.gz https://nodejs.org/dist/v${NPM_6_NODE_VERSION}/node-v${NPM_6_NODE_VERSION}-linux-x64.tar.xz \
+    && mkdir -p "${NPM_6_NODE_DIRECTORY}" \
+    && tar xf node-${NPM_6_NODE_VERSION}.tar.gz -C ${NPM_6_NODE_DIRECTORY} --strip-components 1 \
+    && chmod +x "${NPM_6_NODE_DIRECTORY}/bin/npm" \
+    && rm node-${NPM_6_NODE_VERSION}.tar.gz \
+    && ln -s "${NPM_6_NODE_DIRECTORY}/bin/npm" "${BIN_DIRECTORY}/npm6" \
+    && curl -SL --output node-${NPM_7_NODE_VERSION}.tar.gz https://nodejs.org/dist/v${NPM_7_NODE_VERSION}/node-v${NPM_7_NODE_VERSION}-linux-x64.tar.xz \
+    && mkdir -p "${NPM_7_NODE_DIRECTORY}" \
+    && tar xf node-${NPM_7_NODE_VERSION}.tar.gz -C ${NPM_7_NODE_DIRECTORY} --strip-components 1 \
+    && chmod +x "${NPM_7_NODE_DIRECTORY}/bin/npm" \
+    && rm node-${NPM_7_NODE_VERSION}.tar.gz \
+    && ln -s "${NPM_7_NODE_DIRECTORY}/bin/npm" "${BIN_DIRECTORY}/npm7"
 
 RUN cd /tmp \
     && git clone https://github.com/opsengine/cpulimit.git \
@@ -119,7 +138,6 @@ RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
     java --version
 
 #install Maven
-ENV BIN_DIRECTORY=/usr/local/bin
 ENV MAVEN_VERSION 3.6.3
 ENV M2_HOME $BIN_DIRECTORY/maveninstallation
 ENV MAVEN_HOME $BIN_DIRECTORY/maveninstallation
