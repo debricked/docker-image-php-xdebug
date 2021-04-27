@@ -227,9 +227,9 @@ RUN curl -SL --output dotnet.tar.gz https://download.visualstudio.microsoft.com/
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-RUN docker-php-ext-configure zip
+RUN docker-php-ext-configure zip && docker-php-ext-configure pcntl
 RUN chmod +x /usr/local/bin/install-php-extensions && sync \
-    && install-php-extensions amqp apcu exif fileinfo gd pdo_mysql mysqli pdo_pgsql redis \
+    && install-php-extensions amqp apcu exif fileinfo gd pdo_mysql mysqli pcntl pdo_pgsql redis \
     sockets zip opcache intl xdebug xsl \
     && docker-php-ext-install mbstring
 
