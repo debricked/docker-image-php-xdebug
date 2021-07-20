@@ -194,7 +194,7 @@ RUN echo "### User Sources for Android SDK Manager" > ~/.android/repositories.cf
 RUN $ANDROID_HOME/tools/bin/sdkmanager --update
 
 # Install Bazel build tool
-ENV BAZEL_VERSION 4.1.0
+ENV BAZEL_VERSION 3.7.2
 
 RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add - \
     && echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list \
