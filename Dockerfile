@@ -12,7 +12,7 @@ RUN apt update && apt install gnupg -y
 
 RUN apt install software-properties-common dirmngr -y
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
