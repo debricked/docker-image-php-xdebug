@@ -15,10 +15,12 @@ RUN apt install software-properties-common dirmngr -y
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && curl -sS https://packages.couchbase.com/clients/c/repos/deb/couchbase.key | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
     && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list \
 # Need buster-backports in order to get a recent version of go
     && echo 'deb http://deb.debian.org/debian buster-backports main' > /etc/apt/sources.list.d/backports.list \
+    && echo 'deb https://packages.couchbase.com/clients/c/repos/deb/debian10 buster buster/main' > /etc/apt/sources.list.d/couchbase.list \
     && mkdir -p /usr/share/man/man1
 
 RUN apt update && apt upgrade -y \
@@ -231,7 +233,8 @@ RUN docker-php-ext-configure zip && docker-php-ext-configure pcntl
 RUN chmod +x /usr/local/bin/install-php-extensions && sync \
     && install-php-extensions amqp apcu exif fileinfo gd pdo_mysql mysqli pcntl pdo_pgsql redis \
     sockets zip opcache intl xdebug xsl \
-    && docker-php-ext-install mbstring
+    && docker-php-ext-install mbstring \
+    && apt update && apt -y install libcouchbase-dev && rm -rf /var/lib/apt/lists/* && pecl install couchbase-3.1.2
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
     && chmod +x /usr/bin/composer
@@ -251,6 +254,7 @@ RUN echo "date.timezone = UTC" >> /usr/local/etc/php/php.ini \
     && echo "apc.shm_size = 512M" >> /usr/local/etc/php/php.ini \
     && echo "apc.enabled = 1" >> /usr/local/etc/php/php.ini \
     && echo "apc.enable_cli = 1" >> /usr/local/etc/php/php.ini \
+    && echo "extension=couchbase.so" >> /usr/local/etc/php/php.ini \
     && echo /usr/local/etc/php/php.ini
 
 RUN apt update && apt install automake nasm libtool -y \
