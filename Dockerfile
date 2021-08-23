@@ -196,12 +196,31 @@ RUN echo "### User Sources for Android SDK Manager" > ~/.android/repositories.cf
 RUN $ANDROID_HOME/tools/bin/sdkmanager --update
 
 # Install Bazel build tool
-ENV BAZEL_VERSION 3.7.2
 
+ENV BAZEL1_VERSION 1.2.1
 RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add - \
     && echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list \
-    && apt update && apt install bazel-$BAZEL_VERSION \
-    && ln -s /usr/bin/bazel-$BAZEL_VERSION $BIN_DIRECTORY/bazel
+    && apt update && apt install bazel-$BAZEL1_VERSION \
+    && ln -s /usr/bin/bazel-$BAZEL1_VERSION $BIN_DIRECTORY/bazel1
+
+ENV BAZEL2_VERSION 2.2.0
+RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add - \
+    && echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list \
+    && apt update && apt install bazel-$BAZEL2_VERSION \
+    && ln -s /usr/bin/bazel-$BAZEL2_VERSION $BIN_DIRECTORY/bazel2
+
+ENV BAZEL3_VERSION 3.7.2
+RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add - \
+    && echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list \
+    && apt update && apt install bazel-$BAZEL3_VERSION \
+    && ln -s /usr/bin/bazel-$BAZEL3_VERSION $BIN_DIRECTORY/bazel3
+
+ENV BAZEL4_VERSION 4.1.0
+RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add - \
+    && echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list \
+    && apt update && apt install bazel-$BAZEL4_VERSION \
+    && ln -s /usr/bin/bazel-$BAZEL4_VERSION $BIN_DIRECTORY/bazel4
+    && ln -s /usr/bin/bazel-$BAZEL4_VERSION $BIN_DIRECTORY/bazel
 
 # Chromium dependencies
 RUN apt install google-chrome-stable \
