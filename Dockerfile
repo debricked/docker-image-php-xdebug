@@ -95,7 +95,7 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 RUN docker-php-ext-configure zip && docker-php-ext-configure pcntl
 RUN chmod +x /usr/local/bin/install-php-extensions && sync \
     && install-php-extensions amqp apcu exif fileinfo gd pdo_mysql mysqli pcntl pdo_pgsql redis \
-    sockets zip opcache intl xdebug xsl \
+    sockets zip opcache intl uuid xdebug xsl \
     && docker-php-ext-install mbstring \
     && apt update && apt -y install libcouchbase-dev && rm -rf /var/lib/apt/lists/* && pecl install couchbase-3.1.2
 
