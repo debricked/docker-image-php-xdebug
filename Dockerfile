@@ -25,7 +25,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
 RUN apt update && apt upgrade -y \
     && apt install unzip mariadb-client git zlib1g zlib1g-dev libzip-dev libicu-dev \
     libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk \
-    ca-certificates p11-kit libonig-dev libgcrypt20-dev \
+    ca-certificates p11-kit libonig-dev libgcrypt20-dev jq \
     sudo procps -y \
     && yarn global add bower
 
