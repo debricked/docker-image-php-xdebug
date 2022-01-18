@@ -120,11 +120,13 @@ RUN apt update && apt install automake nasm libtool -y \
     && git clone git://github.com/mozilla/mozjpeg.git && cd mozjpeg \
     && git checkout v3.3.1 && autoreconf -fiv && ./configure --prefix=/opt/mozjpeg && make install
 
-RUN git clone --recursive https://github.com/pornel/pngquant.git \
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+    && git clone --recursive https://github.com/pornel/pngquant.git \
     && cd pngquant \
-    && ./configure \
-    && make \
-    && make install
+    && cargo build --release \
+    && rustup self uninstall -y
 
 # Install Mercure
 RUN curl https://github.com/dunglas/mercure/releases/download/v0.11.3/mercure_0.11.3_Linux_x86_64.tar.gz --output /tmp/mercure.tar.gz -L \
