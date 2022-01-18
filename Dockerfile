@@ -126,5 +126,12 @@ RUN git clone --recursive https://github.com/pornel/pngquant.git \
     && make \
     && make install
 
+# Install Mercure
+RUN curl https://github.com/dunglas/mercure/releases/download/v0.11.3/mercure_0.11.3_Linux_x86_64.tar.gz --output /tmp/mercure.tar.gz -L \
+    && tar -xzvf /tmp/mercure.tar.gz -C /tmp \
+    && cp /tmp/mercure /usr/bin/mercure \
+    && rm -rf /tmp/mercure* \
+    && chmod +x /usr/bin/mercure
+
 # Cleanup
 RUN rm -rf /var/lib/apt/lists/* && apt clean
