@@ -122,12 +122,11 @@ RUN apt update && apt install automake nasm libtool -y \
 
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-RUN apt install rustc -y \
-    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
     && git clone --recursive https://github.com/pornel/pngquant.git \
     && cd pngquant \
     && cargo build --release \
-    && apt remove rustc -y
+    && rustup self uninstall -y
 
 # Install Mercure
 RUN curl https://github.com/dunglas/mercure/releases/download/v0.11.3/mercure_0.11.3_Linux_x86_64.tar.gz --output /tmp/mercure.tar.gz -L \
