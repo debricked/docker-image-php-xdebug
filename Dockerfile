@@ -133,5 +133,11 @@ RUN curl https://github.com/dunglas/mercure/releases/download/v0.11.3/mercure_0.
     && rm -rf /tmp/mercure* \
     && chmod +x /usr/bin/mercure
 
+# Add ets (timestamps)
+RUN apt install jq -y \
+    && ets_version=$(curl -s https://api.github.com/repos/zmwangx/ets/releases/latest | jq -r .tag_name | cut -c2-) \
+    && curl -L "https://github.com/zmwangx/ets/releases/download/v${ets_version}/ets_${ets_version}_linux_amd64.tar.gz" --output - | tar -xz -C /usr/local/bin \
+    && apt remove jq -y
+
 # Cleanup
 RUN rm -rf /var/lib/apt/lists/* && apt clean
