@@ -117,7 +117,7 @@ RUN echo "date.timezone = UTC" >> /usr/local/etc/php/php.ini \
     && echo /usr/local/etc/php/php.ini
 
 RUN apt update && apt install automake nasm libtool -y \
-    && git clone git://github.com/mozilla/mozjpeg.git && cd mozjpeg \
+    && git clone https://github.com/mozilla/mozjpeg && cd mozjpeg \
     && git checkout v3.3.1 && autoreconf -fiv && ./configure --prefix=/opt/mozjpeg && make install
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
