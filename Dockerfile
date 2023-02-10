@@ -9,9 +9,10 @@ ENV BIN_DIRECTORY=/usr/local/bin
 
 RUN apt update && apt install gnupg -y
 
-RUN apt install software-properties-common dirmngr -y
+RUN curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add - && \
+    apt install software-properties-common dirmngr -y
 
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
@@ -127,7 +128,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
     && PATH="/root/.cargo/bin:${PATH}" rustup self uninstall -y
 
 # Install Mercure
-RUN curl https://github.com/dunglas/mercure/releases/download/v0.11.3/mercure_0.11.3_Linux_x86_64.tar.gz --output /tmp/mercure.tar.gz -L \
+RUN curl https://github.com/dunglas/mercure/releases/download/v0.14.4/mercure_0.14.4_Linux_x86_64.tar.gz --output /tmp/mercure.tar.gz -L \
     && tar -xzvf /tmp/mercure.tar.gz -C /tmp \
     && cp /tmp/mercure /usr/bin/mercure \
     && rm -rf /tmp/mercure* \
