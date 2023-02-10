@@ -7,10 +7,10 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 ENV BIN_DIRECTORY=/usr/local/bin
 
-RUN apt update && apt install gnupg -y
+RUN curl https://bazel.build/bazel-release.pub.gpg >> /tmp/bazel.key && apt-key add /tmp/bazel.key && \
+    apt update && apt install gnupg -y
 
-RUN curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add - && \
-    apt install software-properties-common dirmngr -y
+RUN apt install software-properties-common dirmngr -y
 
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
