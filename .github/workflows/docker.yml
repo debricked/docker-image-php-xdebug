@@ -2,8 +2,6 @@ name: Build and push the docker image/s
 
 on:
   push:
-    branches:
-      - master
 
 jobs:
   docker:
@@ -42,7 +40,7 @@ jobs:
         with:
           context: build-tools/
           platforms: linux/amd64
-          push: true
+          push: ${{ github.ref == 'refs/heads/master' }}
           tags: |
            debricked/docker-image-build-tools:latest
            ghcr.io/debricked/docker-image-build-tools:latest
@@ -52,7 +50,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
-          push: true
+          push: ${{ github.ref == 'refs/heads/master' }}
           tags: |
            debricked/docker-image-php-xdebug:latest
            ghcr.io/debricked/docker-image-php-xdebug:latest
