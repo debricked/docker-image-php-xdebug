@@ -62,8 +62,6 @@ RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
     java_version=8; \
     java_certificates="java-se-8u40-ri/jre/lib/security/cacerts jdk-10.0.2/lib/security/cacerts"; \
     for java_certificate in ${java_certificates}; do \
-        openssl s_client -showcerts -connect repo.jfrog.org:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >jfrog.PEM; \
-        yes | keytool -import -alias "jfrogCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file jfrog.PEM -storepass changeit; \
         openssl s_client -showcerts -connect dl.google.com:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >dlGoogle.PEM; \
         yes | keytool -import -alias "dlGoogleCert$java_version" -keystore "/usr/lib/jvm/$java_certificate" -file dlGoogle.PEM -storepass changeit; \
         openssl s_client -showcerts -connect maven.fabric.io:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >mavenFabricIo.PEM; \
@@ -79,7 +77,6 @@ RUN echo "JAVA_HOME is set to: $JAVA_HOME" && set -eux; \
         rm bintray.PEM; \
         rm mavenFabricIo.PEM; \
         rm dlGoogle.PEM; \
-        rm jfrog.PEM; \
         java_version=10; \
     done; \
 # https://github.com/docker-library/openjdk/issues/331#issuecomment-498834472
