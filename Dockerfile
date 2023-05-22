@@ -12,13 +12,13 @@ RUN curl https://bazel.build/bazel-release.pub.gpg >> /tmp/bazel.key && apt-key 
 
 RUN apt install software-properties-common dirmngr -y
 
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
     && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list \
-# Need buster-backports in order to get a recent version of go
-    && echo 'deb http://deb.debian.org/debian buster-backports main' > /etc/apt/sources.list.d/backports.list \
+# Need bullseye-backports in order to get a recent version of go
+    && echo 'deb http://deb.debian.org/debian bullseye-backports main' > /etc/apt/sources.list.d/backports.list \
     && mkdir -p /usr/share/man/man1
 
 RUN apt update && apt upgrade -y \
@@ -58,8 +58,8 @@ RUN cd /tmp \
 RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y \
     && pip3 install pipenv
 
-# Install Go from buster-backports
-RUN apt install -t buster-backports golang-go -y
+# Install Go from bullseye-backports
+RUN apt install -t bullseye-backports golang-go -y
 
 #install Gdub
 RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \
@@ -77,11 +77,11 @@ RUN apt install google-chrome-stable \
     xvfb \
     dbus-x11 -yqq > /dev/null
 
-ENV DOTNET_ROOT ${BIN_DIRECTORY}/dotnet-3.1.300
+ENV DOTNET_ROOT ${BIN_DIRECTORY}/dotnet-3.1.426
 ENV PATH $PATH:${DOTNET_ROOT}
 
 #Install dotnet and check so that it actually works
-RUN curl -SL --output dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/0c795076-b679-457e-8267-f9dd20a8ca28/02446ea777b6f5a5478cd3244d8ed65b/dotnet-sdk-3.1.300-linux-x64.tar.gz \
+RUN curl -SL --output dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/e89c4f00-5cbb-4810-897d-f5300165ee60/027ace0fdcfb834ae0a13469f0b1a4c8/dotnet-sdk-3.1.426-linux-x64.tar.gz \
     && mkdir -p "${DOTNET_ROOT}" \
     && tar zxf dotnet.tar.gz -C "${DOTNET_ROOT}" \
     && chmod +x "${DOTNET_ROOT}/dotnet" \
@@ -94,7 +94,7 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 RUN docker-php-ext-configure zip && docker-php-ext-configure pcntl
 RUN chmod +x /usr/local/bin/install-php-extensions && sync \
     && install-php-extensions amqp apcu bcmath exif fileinfo gd pdo_mysql mysqli pcntl pdo_pgsql redis \
-    sockets zip opcache intl uuid xdebug xsl \
+    sockets zip opcache intl uuid xsl \
     && docker-php-ext-install mbstring
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
@@ -126,6 +126,9 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
     && cd pngquant \
     && PATH="/root/.cargo/bin:${PATH}" cargo build --release \
     && PATH="/root/.cargo/bin:${PATH}" rustup self uninstall -y
+
+# Symfony CLI
+RUN curl -sS https://get.symfony.com/cli/installer | bash && mv $HOME/.symfony5/bin/symfony /usr/local/bin/symfony
 
 # Install Mercure
 RUN curl https://github.com/dunglas/mercure/releases/download/v0.14.4/mercure_0.14.4_Linux_x86_64.tar.gz --output /tmp/mercure.tar.gz -L \
