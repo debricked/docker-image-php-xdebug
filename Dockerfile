@@ -94,7 +94,7 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 RUN docker-php-ext-configure zip && docker-php-ext-configure pcntl
 RUN chmod +x /usr/local/bin/install-php-extensions && sync \
     && install-php-extensions amqp apcu bcmath exif fileinfo gd pdo_mysql mysqli pcntl pdo_pgsql redis \
-    sockets zip opcache intl uuid xsl \
+    sockets zip zstd opcache intl uuid xsl \
     && docker-php-ext-install mbstring
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
