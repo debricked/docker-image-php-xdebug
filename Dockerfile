@@ -81,6 +81,8 @@ RUN apt install google-chrome-stable \
 ENV DOTNET_ROOT /usr/lib/dotnet
 ENV DOTNET_MAJOR 8.0
 ENV PATH $DOTNET_ROOT:$PATH
+RUN apt -y update && apt -y install libicu72 && \
+    apt -y clean && rm -rf /var/lib/apt/lists/*
 RUN curl -fsSLO https://dot.net/v1/dotnet-install.sh \
     && chmod u+x ./dotnet-install.sh \
     && ./dotnet-install.sh --channel $DOTNET_MAJOR --install-dir $DOTNET_ROOT \
