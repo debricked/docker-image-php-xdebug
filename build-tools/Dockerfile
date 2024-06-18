@@ -4,7 +4,7 @@ ENV BIN_DIRECTORY=/usr/local/bin
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 
 RUN apt update && apt upgrade -y \
-    && apt install -y gnupg p11-kit openjdk-11-jdk unzip
+    && apt install -y gnupg p11-kit openjdk-17-jdk unzip
 
 RUN curl -L -O https://download.java.net/openjdk/jdk7u75/ri/jdk_ri-7u75-b13-linux-x64-18_dec_2014.tar.gz \
     && tar -xvf jdk_ri-7u75-b13-linux-x64-18_dec_2014.tar.gz \
@@ -37,7 +37,7 @@ ENV JAVA_HOME7="/usr/lib/jvm/java-se-7u75-ri"
 ENV JAVA_HOME8="/usr/lib/jvm/java-se-8u40-ri"
 ENV JAVA_HOME9="/usr/lib/jvm/jdk-9.0.4"
 ENV JAVA_HOME10="/usr/lib/jvm/jdk-10.0.2"
-ENV JAVA_HOME11="/usr/lib/jvm/java-11-openjdk-amd64"
+ENV JAVA_HOME11="/usr/lib/jvm/java-17-openjdk-amd64"
 
 # update "cacerts" bundle to use Debian's CA certificates (and make sure it stays up-to-date with changes to Debian's store)
 # see https://github.com/docker-library/openjdk/issues/327
