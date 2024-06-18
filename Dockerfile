@@ -17,13 +17,13 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
     && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list \
-# Need bullseye-backports in order to get a recent version of go
-    && echo 'deb http://deb.debian.org/debian bullseye-backports main' > /etc/apt/sources.list.d/backports.list \
+# Need bookworm-backports in order to get a recent version of go
+    && echo 'deb http://deb.debian.org/debian bookworm-backports main' > /etc/apt/sources.list.d/backports.list \
     && mkdir -p /usr/share/man/man1
 
 RUN apt update && apt upgrade -y \
     && apt install unzip mariadb-client git zlib1g zlib1g-dev libzip-dev libicu-dev \
-    libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-11-jdk \
+    libpng-dev nodejs yarn libpcre3-dev optipng libxslt1-dev libxslt1.1 openjdk-17-jdk \
     ca-certificates p11-kit libonig-dev libgcrypt20-dev \
     sudo procps -y \
     && yarn global add bower
@@ -48,18 +48,18 @@ RUN curl -SL --output node-${NPM_6_NODE_VERSION}.tar.gz https://nodejs.org/dist/
     && ln -s "${NPM_7_NODE_DIRECTORY}/bin/npm" "${BIN_DIRECTORY}/npm7"
 
 RUN cd /tmp \
-    && git clone https://github.com/opsengine/cpulimit.git \
+    && git clone https://github.com/stephensp/cpulimit.git --branch fix-includes \
     && cd cpulimit \
+    && git reset --hard 4c1e021037550c437c7da3a276b95b5bf79e967e \
     && make \
     && cp src/cpulimit /usr/bin \
     && chmod +x /usr/bin/cpulimit
 
 # Install python and pip and related dev packages.
-RUN apt update && apt install python3 python3-dev python3-pip python3-venv libffi-dev libssl-dev -y \
-    && pip3 install pipenv
+RUN apt update && apt install python3 python3-dev python3-pip pipenv python3-venv libffi-dev libssl-dev -y
 
-# Install Go from bullseye-backports
-RUN apt install -t bullseye-backports golang-go -y
+# Install Go from bookworm-backports
+RUN apt install -t bookworm-backports golang-go -y
 
 #install Gdub
 RUN curl -L -O https://github.com/dougborg/gdub/zipball/master && unzip master && rm master \
@@ -77,21 +77,20 @@ RUN apt install google-chrome-stable \
     xvfb \
     dbus-x11 -yqq > /dev/null
 
-ENV DOTNET_ROOT ${BIN_DIRECTORY}/dotnet-3.1.426
-ENV PATH $PATH:${DOTNET_ROOT}
-
 #Install dotnet and check so that it actually works
-RUN curl -SL --output dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/e89c4f00-5cbb-4810-897d-f5300165ee60/027ace0fdcfb834ae0a13469f0b1a4c8/dotnet-sdk-3.1.426-linux-x64.tar.gz \
-    && mkdir -p "${DOTNET_ROOT}" \
-    && tar zxf dotnet.tar.gz -C "${DOTNET_ROOT}" \
-    && chmod +x "${DOTNET_ROOT}/dotnet" \
-    && rm dotnet.tar.gz \
-    && ln -s "${DOTNET_ROOT}/dotnet" "${BIN_DIRECTORY}/dotnet" \
+ENV DOTNET_ROOT /usr/lib/dotnet
+ENV DOTNET_MAJOR 8.0
+ENV PATH $DOTNET_ROOT:$PATH
+RUN curl -fsSLO https://dot.net/v1/dotnet-install.sh \
+    && chmod u+x ./dotnet-install.sh \
+    && ./dotnet-install.sh --channel $DOTNET_MAJOR --install-dir $DOTNET_ROOT \
+    && rm ./dotnet-install.sh \
     && dotnet help
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
 RUN docker-php-ext-configure zip && docker-php-ext-configure pcntl
+RUN apt install
 RUN chmod +x /usr/local/bin/install-php-extensions && sync \
     && install-php-extensions amqp apcu bcmath exif fileinfo gd pdo_mysql mysqli pcntl pdo_pgsql redis \
     sockets zip zstd opcache intl uuid xsl \
