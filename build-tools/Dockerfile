@@ -133,12 +133,6 @@ RUN $ANDROID_HOME/tools/bin/sdkmanager --update
 
 # Install Bazel build tool
 
-ENV BAZEL1_VERSION 1.2.1
-RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add - \
-    && echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list \
-    && apt update && apt install -y bazel-$BAZEL1_VERSION \
-    && ln -s /usr/bin/bazel-$BAZEL1_VERSION $BIN_DIRECTORY/bazel1
-
 ENV BAZEL2_VERSION 2.2.0
 RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add - \
     && echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list \
