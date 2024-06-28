@@ -132,7 +132,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
 RUN curl -sS https://get.symfony.com/cli/installer | bash && mv $HOME/.symfony5/bin/symfony /usr/local/bin/symfony
 
 # Install Mercure
-RUN curl https://github.com/dunglas/mercure/releases/download/v0.14.4/mercure_0.14.4_Linux_x86_64.tar.gz --output /tmp/mercure.tar.gz -L \
+RUN curl https://github.com/dunglas/mercure/releases/download/v0.16.2/mercure_Linux_x86_64.tar.gz --output /tmp/mercure.tar.gz -L \
     && tar -xzvf /tmp/mercure.tar.gz -C /tmp \
     && cp /tmp/mercure /usr/bin/mercure \
     && rm -rf /tmp/mercure* \
