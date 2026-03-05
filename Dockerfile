@@ -1,4 +1,4 @@
-FROM debricked/docker-image-build-tools:latest
+FROM debricked/docker-image-build-tools:php84
 
 # Fixes problems with Puppeteer (Chromium API)
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1

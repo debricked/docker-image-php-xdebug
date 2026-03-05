@@ -50,7 +50,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
-          push: ${{ github.ref == 'refs/heads/master' }}
+          push: true
           tags: |
            debricked/docker-image-php-xdebug:php84
            ghcr.io/debricked/docker-image-php-xdebug:php84
