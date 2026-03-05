@@ -42,8 +42,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ github.ref == 'refs/heads/master' }}
           tags: |
-           debricked/docker-image-build-tools:latest
-           ghcr.io/debricked/docker-image-build-tools:latest
+           debricked/docker-image-build-tools:7805-prisma-vulnerabilities
+           ghcr.io/debricked/docker-image-build-tools:7805-prisma-vulnerabilities
       -
         name: Build and push full image
         uses: docker/build-push-action@v4
@@ -52,5 +52,5 @@ jobs:
           platforms: linux/amd64
           push: ${{ github.ref == 'refs/heads/master' }}
           tags: |
-           debricked/docker-image-php-xdebug:latest
-           ghcr.io/debricked/docker-image-php-xdebug:latest
+           debricked/docker-image-php-xdebug:7805-prisma-vulnerabilities
+           ghcr.io/debricked/docker-image-php-xdebug:7805-prisma-vulnerabilities

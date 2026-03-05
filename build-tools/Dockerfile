@@ -1,4 +1,4 @@
-FROM php:8.3-fpm
+FROM php:8.4-fpm-bookworm
 
 ENV BIN_DIRECTORY=/usr/local/bin
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
