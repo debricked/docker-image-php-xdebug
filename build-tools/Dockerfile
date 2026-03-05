@@ -151,5 +151,3 @@ RUN curl https://bazel.build/bazel-release.pub.gpg | apt-key add - \
     && apt update && apt install -y bazel-$BAZEL4_VERSION \
     && ln -s /usr/bin/bazel-$BAZEL4_VERSION $BIN_DIRECTORY/bazel4 \
     && ln -s /usr/bin/bazel-$BAZEL4_VERSION $BIN_DIRECTORY/bazel
-
-    

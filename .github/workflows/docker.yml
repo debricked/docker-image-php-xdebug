@@ -40,10 +40,10 @@ jobs:
         with:
           context: build-tools/
           platforms: linux/amd64
-          push: ${{ github.ref == 'refs/heads/master' }}
+          push: true
           tags: |
-           debricked/docker-image-build-tools:7805-prisma-vulnerabilities
-           ghcr.io/debricked/docker-image-build-tools:7805-prisma-vulnerabilities
+           debricked/docker-image-build-tools:php84
+           ghcr.io/debricked/docker-image-build-tools:php84
       -
         name: Build and push full image
         uses: docker/build-push-action@v4
@@ -52,5 +52,5 @@ jobs:
           platforms: linux/amd64
           push: ${{ github.ref == 'refs/heads/master' }}
           tags: |
-           debricked/docker-image-php-xdebug:7805-prisma-vulnerabilities
-           ghcr.io/debricked/docker-image-php-xdebug:7805-prisma-vulnerabilities
+           debricked/docker-image-php-xdebug:php84
+           ghcr.io/debricked/docker-image-php-xdebug:php84
